@@ -1,0 +1,56 @@
+RewriteEngine On
+#Options -Indexes
+RewriteBase /
+
+#https redirect
+#RewriteCond %{HTTPS} off
+#RewriteCond %{REQUEST_URI} !Api/Sms/care
+#RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+## Now, rewrite any request to the wrong domain to use www.
+##RewriteCond %{HTTP_HOST} !^www\.
+##RewriteRule ^(.*)$ https://www.%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+#RewriteCond %{HTTPS} off
+#RewriteCond %{REQUEST_URI} !(index.php)
+#RewriteCond %{REQUEST_URI} !(Api/Sms/care)
+#RewriteRule ^.*$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+#MVC rewrite
+RewriteCond %{REQUEST_FILENAME} -s [OR]
+RewriteCond %{REQUEST_FILENAME} -l [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+
+#RewriteCond $0 !\.(php|css|js|woff2)
+RewriteRule ^.*$ - [NC]
+
+# Protect File Rewite
+#RewriteCond $0 \.(gif|jpg|jpeg|png|ico|xlsx|xls|docx|doc|pptx|ppt|rar|zip)
+#RewriteCond $0 !\.(php|css|js|html|eot|woff2|woff|ttf|svg)
+#RewriteRule ^(Application/Data.*)$ index.php?mvc=File/Get/real&type=$1&filename=$1
+
+ErrorDocument 404 /404.html
+#IndexIgnore *
+#RewriteRule ^.*$ - [NC]
+RewriteCond $0 !\.(7z|php|gif|jpg|jpeg|png|ico|css|js|swf|wav|mp3|less|cur|crt|woff2|eot|ttf|woff|PHP|GIF|JPG|JPEG|PNG|ICO|CSS|JS|SWF|WAV|MP3|LESS|CUR|CRT|WOFF2|EOT|TTF|WOFF)
+RewriteRule ^.*$ index.php
+
+
+
+
+#Do not download .ini file
+<Files *.ini>
+    order allow,deny
+    deny from all
+</Files>
+
+#Load default image if image mot fould
+#RewriteCond %{REQUEST_URI} \.(jpg|jpeg|gif|png|ico)$ [NC]
+#RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteCond %{REQUEST_FILENAME} !-d
+#RewriteRule .*$ /no-image.png [L]
+
+
+#php_value memory_limit 1000M
+#php_value max_execution_time 6000000
+#php_flag display_errors on

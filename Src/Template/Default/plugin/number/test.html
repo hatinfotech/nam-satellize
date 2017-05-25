@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="UTF-8">
+  <title>Number</title>
+  <script src="../../jquery-2.0.0.js"></script>
+  <script src="../../plugins/jQuery-Inputmask/js/inputmask.js"></script>
+  <script src="../../plugins/jQuery-Inputmask/js/inputmask.numeric.extensions.js"></script>
+  <script src="../../plugins/jQuery-Inputmask/js/jquery.inputmask.js"></script>
+  <script src="../../plugins/number/number.js"></script>
+</head>
+<body>
+
+<label>Number</label>
+<input type="text" name="number" style="font-size: 36px; padding: 3px">
+<script>
+    $('input[name="number"]').inputmask("currency", {
+//  $('input[name="number"]').myNumber("numeric", {
+       radixPoint: ",",
+       groupSeparator: " ",
+//       groupSize: 3,
+       prefix: "",
+       autoGroup: true,
+       autoUnmask: true,
+       unmaskAsNumber: true,
+       digits:0
+     }
+  ).keyup(function (e) {
+       console.log($(this).val());
+     });
+</script>
+</body>
+</html>
