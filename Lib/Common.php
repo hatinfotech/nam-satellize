@@ -137,15 +137,19 @@ class Common {
      * @param $message string|Exception
      */
     public static function errorReport($message) {
-        if ($message instanceof Exception) {
-            $_SESSION[K::LAST_EXCEPTION] = $message;
-            $_SESSION[K::LAST_NOTIFICATION] = $message->getMessage();
+        if (Bootstrap::g()->isCliMode()) {
+            echo "$message\n";
         } else {
-            $_SESSION[K::LAST_NOTIFICATION] = $message;
+            if ($message instanceof Exception) {
+                $_SESSION[K::LAST_EXCEPTION] = $message;
+                $_SESSION[K::LAST_NOTIFICATION] = $message->getMessage();
+            } else {
+                $_SESSION[K::LAST_NOTIFICATION] = $message;
+            }
+            //Common::printArr($_SESSION);
+            //exit;
+            header('Location: /thong-bao.html');
         }
-        //Common::printArr($_SESSION);
-        //exit;
-        header('Location: /thong-bao.html');
     }
 
     public static function notify($message) {

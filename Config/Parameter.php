@@ -29,7 +29,7 @@ class Config_Parameter {
                 '/^dang-xuat\.html$/' => array('Site', 'Admin', 'logout', K::parameter => array()),
                 '/^yeu-cau-van-chuyen\.html$/' => array('Site', 'Main', 'index', K::parameter => array()),
                 '/^phan-loai-san-pham\/([^\/]*)\.html$/' => array('Site', 'Main', 'productCategory', K::parameter => array('cateUniqueKey')),
-                '/^phan-loai-san-pham\/([^\/]*)\/trang-([0-9]*)\.html$/' => array('Site', 'Main', 'productCategory', K::parameter => array('cateUniqueKey','page')),
+                '/^phan-loai-san-pham\/([^\/]*)\/trang-([0-9]*)\.html$/' => array('Site', 'Main', 'productCategory', K::parameter => array('cateUniqueKey', 'page')),
                 '/^([^\/]*)\.html$/' => array('Site', 'Main', 'product', K::parameter => array('uniqueKey')),
             ),
             K::DB => array(
@@ -51,6 +51,8 @@ class Config_Parameter {
 //            K::NAM_API_URl => 'http://enterprise.namsoftware.com',
             K::uploadDir => BASE_DIR . '/upload',
             K::uploadPath => '/upload',
+            K::NO_DB => false,
+            K::PLATFORM => 'windows',
         );
     }
 
@@ -61,9 +63,10 @@ class Config_Parameter {
      */
     public static function getInstance() {
         if (!self::$self) {
-            $serverName = str_replace('.', '', $_SERVER['SERVER_NAME']);
+            $serverName = str_replace('.', '', Bootstrap::g()->getServerName());
             $serverName[0] = strtoupper($serverName[0]);
-            $configClass = "Config_{$serverName}_Parameter";
+            $serverPort = (!Bootstrap::g()->getServerPort() || Bootstrap::g()->getServerPort() == 80) ? '' : Bootstrap::g()->getServerPort();
+            $configClass = "Config_{$serverName}{$serverPort}_Parameter";
             //echo $configClass;
             //exit;
             if (!class_exists($configClass)) {
@@ -81,10 +84,14 @@ class Config_Parameter {
 
     public static function getSiteInfo($key = NULL) {
         if (!self::$siteInfo) {
-            self::$siteInfo = Db::getInstance()->toArray("SELECT `Name`, `Value` FROM `web_parameters` WHERE `Name` LIKE 'WEB_%'", array(
-                'IndexColumns' => 'Name',
-                'ValueColumn' => 'Value'
-            ));
+            if (!Config_Parameter::g(K::NO_DB)) {
+                self::$siteInfo = Db::getInstance()->toArray("SELECT `Name`, `Value` FROM `web_parameters` WHERE `Name` LIKE 'WEB_%'", array(
+                    'IndexColumns' => 'Name',
+                    'ValueColumn' => 'Value'
+                ));
+            } else {
+                self::$siteInfo = array();
+            }
         }
         return $key ? self::$siteInfo[$key] : self::$siteInfo;
     }

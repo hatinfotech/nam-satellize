@@ -179,4 +179,13 @@ class K {
     const SysLog = 'SysLog';
     const skipNotification = 'skipNotification';
     const folder = 'folder';
+    const newestTime = 'newestTime';
+    const port = 'port';
+    const host = 'host';
+    const BACKUP_PLANE = 'BACKUP_PLANE';
+    const path = 'path';
+    const Folder = 'Folder';
+    const NewestTime = 'NewestTime';
+    const NO_DB = 'NO_DB';
+    const PLATFORM = 'PLATFORM';
 }

@@ -24,6 +24,11 @@ class Bootstrap {
 
     function __construct() {
         session_start();
+        if (php_sapi_name() == 'cli') {
+            $this->workingMod = C::CLI;
+        } else {
+            $this->workingMod = C::WEB;
+        }
     }
 
     /**
@@ -34,26 +39,88 @@ class Bootstrap {
         return self::$self ?: (self::$self = new self());
     }
 
+    public function isCliMode() {
+        return $this->workingMod == C::CLI;
+    }
+
+    public function isWebMode() {
+        return $this->workingMod == C::WEB;
+    }
+
+    public function getServerName() {
+        return $this->isCliMode() ? $this->requestParams[K::host] : $_SERVER['SERVER_NAME'];
+    }
+
+    public function getServerPort() {
+        return $_SERVER['SERVER_PORT'];
+    }
+
+    public function getArchitecture() {
+        return 8 * PHP_INT_SIZE;
+    }
+
     public function run() {
         try {
-            $requestPath = $_SERVER[K::REQUEST_URI];
-            $requestPath = explode('?', $requestPath);
-            $requestPath = $requestPath[0];
 
-            $this->routeInfo = $this->extractRequest($requestPath);
+            switch ($this->workingMod) {
+                case C::CLI:
+                    /**
+                     * Template cli
+                     * php /home/tungvl.com/tungvl.com/AutoGetArticle/cli.php -r Processing/Main/fetchNew
+                     */
+                    $shortopts = "";
+                    $shortopts .= "r:";  // Required value
+                    $shortopts .= "p:"; // Optional value
+                    #$shortopts .= "abc"; // These options do not accept values
 
-            /*** Auto load controller*/
-            $this->moduleName = $this->routeInfo[K::map][0];
-            $this->controllerName = $this->routeInfo[K::map][1];
-            $this->viewName = $this->routeInfo[K::map][2];
+                    $longopts = array(
+                        "route:", // Required value
+                        "param::", // Optional value
+                        #"option", // No value
+                        #"opt", // No value
+                    );
+                    $options = getopt(
+                        $shortopts
+                    //, $longopts
+                    );
 
-            if (is_array($this->routeInfo[K::parameter])) {
-                $this->requestParams = $this->routeInfo[K::parameter];
+                    $routePart = explode('/', $options['r']);
+                    $this->moduleName = $routePart[0];
+                    $this->controllerName = $routePart[1];
+                    $this->viewName = $routePart[2];
+                    if (array_key_exists('p', $options)) {
+                        $paramTmpPart = explode('&', $options['p']);
+                        $paramPart = array();
+                        if (is_array($paramTmpPart) && count($paramTmpPart) > 0) {
+                            foreach ($paramTmpPart as $parma) {
+                                list($key, $value) = explode('=', $parma);
+                                $paramPart[$key] = $value;
+                            }
+                        }
+                        $this->requestParams = new ArrayObject($paramPart);
+                    }
+                    break;
+                case C::WEB:
+                    $requestPath = $_SERVER[K::REQUEST_URI];
+                    $requestPath = explode('?', $requestPath);
+                    $requestPath = $requestPath[0];
+
+                    $this->routeInfo = $this->extractRequest($requestPath);
+
+                    /*** Auto load controller*/
+                    $this->moduleName = $this->routeInfo[K::map][0];
+                    $this->controllerName = $this->routeInfo[K::map][1];
+                    $this->viewName = $this->routeInfo[K::map][2];
+
+                    if (is_array($this->routeInfo[K::parameter])) {
+                        $this->requestParams = $this->routeInfo[K::parameter];
+                    }
+
+                    $this->requestParams = array_merge($this->requestParams, $_GET);
+                    $this->setPostData($_POST);
+                    $this->setFileData($_FILES);
+                    break;
             }
-
-            $this->requestParams = array_merge($this->requestParams, $_GET);
-            $this->setPostData($_POST);
-            $this->setFileData($_FILES);
 
             $controllerClassName = $this->moduleName . '_' . C::Controller . '_' . $this->controllerName;
             if (!class_exists($controllerClassName)) {
@@ -66,7 +133,7 @@ class Bootstrap {
                 $this->moduleName = 'Site';
                 $this->controllerName = 'Main';
                 $this->viewName = 'error404';
-                header('HTTP/1.0 404 Not Found');
+                header('HTTP / 1.0 404 Not Found');
             }
 
             /** @var Controller $controller */

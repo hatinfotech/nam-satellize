@@ -49,7 +49,7 @@ class Db {
      * @param $overrideConfig
      */
     function __construct($overrideConfig) {
-        $dbConfig = Config_Parameter::g('DB');
+        $dbConfig = Config_Parameter::g(K::DB);
         $this->hostname = $dbConfig['hostname'];
         $this->database = $dbConfig['database'];
         $this->username = $dbConfig['username'];

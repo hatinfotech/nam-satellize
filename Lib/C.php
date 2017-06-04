@@ -41,4 +41,6 @@ class C {
     const CLOSE = 'CLOSE';
     const REQUESTFORWARDACCEPT = 'REQUESTFORWARDACCEPT';
     const CANCElFORWARD = 'CANCElFORWARD';
+    const CLI = 'CLI';
+    const WEB = 'WEB';
 }

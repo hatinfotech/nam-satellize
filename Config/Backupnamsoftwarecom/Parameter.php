@@ -21,6 +21,8 @@ class Config_Backupnamsoftwarecom_Parameter extends Config_Parameter {
         );
         $this->parameter[K::SITE_CODE] = 'backup.namsoftware.com';
         $this->parameter[K::NAM_API_URl] = 'http://local.namsoftware.com';
+        $this->parameter[K::BACKUP_PLANE] = 'BKP135171';
+        $this->parameter[K::NO_DB] = true;
     }
 
 }

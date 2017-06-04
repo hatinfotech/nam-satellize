@@ -5,6 +5,7 @@ class NaMApi {
     private $url;
     protected $transApiPath = 'Transportation/WebApi/request';
     protected $salesApiPath = 'Sales/WebApi/request';
+    protected $backupApiPath = 'Backup/Api/request';
     private $secureSalt;
     private $timeout = 300;
 
@@ -43,6 +44,10 @@ class NaMApi {
 
     protected function requestSalesApi($cmd, $parameters = array(), $data = array()) {
         return $this->requestApi($this->salesApiPath, $cmd, $parameters, $data);
+    }
+
+    protected function requestBackupApi($cmd, $parameters = array(), $data = array()) {
+        return $this->requestApi($this->backupApiPath, $cmd, $parameters, $data);
     }
 
     protected function requestApi($apiPath, $cmd, $parameters = array(), $data = array()) {
@@ -197,6 +202,67 @@ class NaMApi {
 
     public function order($data) {
         return $this->requestSalesApi('order', null, $data);
+    }
+
+    public function getBackupPlane($code) {
+        return $this->requestBackupApi('getBackupPlane', array(
+            'plane' => $code
+        ));
+    }
+
+    public function updateBackupScheduleToRunningState($id) {
+        return $this->requestBackupApi('updateBackupScheduleToRunningState', array(
+            'schedule' => $id
+        ));
+    }
+
+    public function updateBackupScheduleToReadyState($id) {
+        return $this->requestBackupApi('updateBackupScheduleToReadyState', array(
+            'schedule' => $id
+        ));
+    }
+
+    public function writeBackupHistory($plane, $locationName, $backupFileName, $status) {
+        return $this->requestBackupApi('writeBackupHistory', array(
+            'plane' => $plane,
+            'locationName' => $locationName,
+            'backupFileName' => $backupFileName,
+            'status' => $status
+        ));
+    }
+
+    public function updateLocationBackingUp($scheduleId, $locationId, $backupFileName) {
+        return $this->requestBackupApi('updateLocationBackingUp', array(
+            'schedule' => $scheduleId,
+            'locationId' => $locationId,
+            'backupFileName' => $backupFileName,
+        ));
+    }
+
+    public function updateLocationLastRunningStateAsFailed($locationId, $fileName) {
+        return $this->requestBackupApi('updateLocationLastRunningStateAsFailed', array(
+            'location' => $locationId,
+            'fileName' => $fileName,
+        ));
+    }
+
+    public function updateLocationLastRunningStateAsSuccess($locationId, $fileName) {
+        return $this->requestBackupApi('updateLocationLastRunningStateAsSuccess', array(
+            'location' => $locationId,
+            'fileName' => $fileName,
+        ));
+    }
+
+    public function updateLiveStatus($plane) {
+        return $this->requestBackupApi('updateLiveStatus', array(
+            'plane' => $plane,
+        ));
+    }
+
+    public function getBackupFileSize($backupFile) {
+        return $this->requestBackupApi('getBackupFileSize', array(
+            'backupFile' => $backupFile,
+        ));
     }
 
 }
