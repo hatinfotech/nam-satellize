@@ -84,6 +84,15 @@ class WebApiServer {
                 case C::updateWidgets:
                     $this->updateWidgets($postData, $filesData);
                     break;
+                case C::updateTransBusinessLocation:
+                    $this->updateTransBusinessLocation($postData, $filesData);
+                    break;
+                case C::cleanTransBusinessLocation:
+                    $this->cleanTransBusinessLocation($postData, $filesData);
+                    break;
+                case C::createTransBusinessLocation:
+                    $this->createTransBusinessLocation($postData, $filesData);
+                    break;
             }
             return array(
                 K::returnKey => true
@@ -119,20 +128,91 @@ class WebApiServer {
 
         foreach ($fileData as $name => $fileItem) {
             $uploadFile = Config_Parameter::g(K::uploadDir) . '/' . $fileItem[K::name][K::Value];
+            //echo $fileItem[K::tmp_name][K::Value]."\n";
+            //echo $uploadFile."\n";
             if (!move_uploaded_file($fileItem[K::tmp_name][K::Value], $uploadFile)) {
                 throw new Exception('System could not move upload file');
             }
 
-            if (!Db::g()->checkExists($q = "SELECT * FROM `web_parameters` WHERE `Site` = " . Db::getSQLValueString(Config_Parameter::g(K::SITE_CODE), K::text) . " &&`Name` = " . Db::getSQLValueString($name, K::text))) {
-                $result = Db::g()->query($q = "INSERT INTO `web_parameters` (`Site`, `Name`, `Value`, `Type`) VALUES (" . Db::getSQLValueString(Config_Parameter::g(K::SITE_CODE), K::text) . "," . Db::getSQLValueString($name, K::text) . "," . Db::getSQLValueString($fileItem[K::name][K::Value], K::text) . "," . Db::getSQLValueString('IMAGE', K::text) . ")");
-            } else {
-                $result = Db::g()->query($q = "UPDATE `web_parameters` SET `Value` = " . Db::getSQLValueString($fileItem[K::name][K::Value], K::text) . " WHERE `Site` = " . Db::getSQLValueString(Config_Parameter::g(K::SITE_CODE), K::text) . " && `Name` = " . Db::getSQLValueString($name, K::text));
-            }
-            if (!$result) {
-                throw new Exception('System could not update parameter for key \'' . $name . '\' ');
+            try {
+
+                if (!Db::g()->checkExists($q = "SELECT * FROM `web_parameters` WHERE `Site` = " . Db::getSQLValueString(Config_Parameter::g(K::SITE_CODE), K::text) . " &&`Name` = " . Db::getSQLValueString($name, K::text))) {
+                    $result = Db::g()->query($q = "INSERT INTO `web_parameters` (`Site`, `Name`, `Value`, `Type`) VALUES (" . Db::getSQLValueString(Config_Parameter::g(K::SITE_CODE), K::text) . "," . Db::getSQLValueString($name, K::text) . "," . Db::getSQLValueString($fileItem[K::name][K::Value], K::text) . "," . Db::getSQLValueString('IMAGE', K::text) . ")");
+                } else {
+                    $result = Db::g()->query($q = "UPDATE `web_parameters` SET `Value` = " . Db::getSQLValueString($fileItem[K::name][K::Value], K::text) . " WHERE `Site` = " . Db::getSQLValueString(Config_Parameter::g(K::SITE_CODE), K::text) . " && `Name` = " . Db::getSQLValueString($name, K::text));
+                }
+                if (!$result) {
+                    throw new Exception('System could not update parameter for key \'' . $name . '\' ');
+                }
+            } catch (Exception $e) {
+                throw new Exception($e->getMessage() . "\n$q", $e->getCode(), $e);
             }
         }
 
+        return true;
+    }
+
+    public function cleanTransBusinessLocation($postData, $fileData) {
+        Db::bt();
+        if (!Db::q("DELETE FROM trans_business_location")) {
+            Db::rt();
+            throw new Exception_Business('System could not clean business location');
+        }
+        if (!Db::q("DELETE FROM trans_business_district")) {
+            Db::rt();
+            throw new Exception_Business('System could not clean business district');
+        }
+        Db::ct();
+        return true;
+    }
+
+    public function createTransBusinessLocation($postData, $fileData) {
+        $postData = $postData[K::data];
+        //print_r($postData);
+        if (!Db::g()->query($q = "INSERT INTO trans_business_district (Id, District, Province, Note) VALUES (" . Db::getSQLValueString($postData[K::Id], K::int) . "," . Db::getSQLValueString($postData[K::District], K::text) . "," . Db::getSQLValueString($postData[K::Province], K::text) . "," . Db::getSQLValueString($postData[K::Note], K::text) . ")")) {
+            Db::rt();
+            throw new Exception_Business('System could not sync transport business district');
+        }
+        foreach ($postData[K::Locations] as $location) {
+            if (!Db::g()->query($q = "INSERT INTO trans_business_location (Id, BusinessDistrict, Location) VALUES (" . Db::getSQLValueString($location[K::Id], K::int) . "," . Db::getSQLValueString($postData[K::Id], K::int) . "," . Db::getSQLValueString($location[K::Location], K::text) . ")")) {
+                Db::rt();
+                throw new Exception_Business('System could not sync transport business district');
+            }
+        }
+        return true;
+    }
+    /**
+     * @param $postData
+     * @param $fileData
+     * @throws Exception
+     * @return bool
+     */
+    public function updateTransBusinessLocation($postData, $fileData) {
+
+        Db::bt();
+        if (!Db::q("DELETE FROM trans_business_location")) {
+            Db::rt();
+            throw new Exception_Business('System could not clean business location');
+        }
+        if (!Db::q("DELETE FROM trans_business_district")) {
+            Db::rt();
+            throw new Exception_Business('System could not clean business district');
+        }
+
+        foreach ($postData as $name => $businessLocation) {
+            if (!Db::g()->query($q = "INSERT INTO trans_business_district (Id, District, Province, Note) VALUES (" . Db::getSQLValueString($businessLocation[K::Id], K::int) . "," . Db::getSQLValueString($businessLocation[K::District], K::text) . "," . Db::getSQLValueString($businessLocation[K::Province], K::text) . "," . Db::getSQLValueString($businessLocation[K::Note], K::text) . ")")) {
+                Db::rt();
+                throw new Exception_Business('System could not sync transport business district');
+            }
+            foreach ($businessLocation[K::Locations] as $location) {
+                if (!Db::g()->query($q = "INSERT INTO trans_business_location (Id, BusinessDistrict, Location) VALUES (" . Db::getSQLValueString($location[K::Id], K::int) . "," . Db::getSQLValueString($businessLocation[K::Id], K::int) . "," . Db::getSQLValueString($location[K::Location], K::text) . ")")) {
+                    Db::rt();
+                    throw new Exception_Business('System could not sync transport business district');
+                }
+            }
+
+        }
+        Db::ct();
         return true;
     }
 
@@ -208,7 +288,7 @@ class WebApiServer {
 
             if (!$flag) {
 
-                if (!Db::g()->query("INSERT INTO `web_banner` (Site, Code, Name) VALUE (" . Db::getSQLValueString(Config_Parameter::g(K::SITE_CODE), K::text) . "," . Db::getSQLValueString($newCode, K::text) . "," . Db::getSQLValueString($newBanner[K::Name], K::text) . ")")) {
+                if (!Db::g()->query("INSERT INTO `web_banner` (Id, Site, Code, Name) VALUE (" . Db::getSQLValueString($newCode, K::int) . "," . Db::getSQLValueString(Config_Parameter::g(K::SITE_CODE), K::text) . "," . Db::getSQLValueString($newBanner[K::Code], K::text) . "," . Db::getSQLValueString($newBanner[K::Name], K::text) . ")")) {
                     throw new Exception('System could not create web banner');
                 }
 

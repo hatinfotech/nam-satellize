@@ -144,9 +144,26 @@ class Site_Controller_Admin extends Site_Controller_Main {
 
         }
         $namApi = new NaMApi();
-        $response = $namApi->getSuggestPrices($locationFrom, $locationTo, $weight, $isCodOrAdvancePayment == 'IsCashOnDelivery', $cashOnDelivery, $isCodOrAdvancePayment == 'IsAdvancePayment' , $advancePayment);
+        $response = $namApi->getSuggestPrices($locationFrom, $locationTo, $weight, $isCodOrAdvancePayment == 'IsCashOnDelivery', $cashOnDelivery, $isCodOrAdvancePayment == 'IsAdvancePayment', $advancePayment);
         $this->checkApiResponse($response);
 
         echo json_encode($response[K::data]);
+        return true;
+    }
+
+    public function cancelTicketAction() {
+        $this->setWorkWithTemplate(false);
+        $this->setHeaderTypeAsJson(true);
+
+        $ticket = $this->getBootstrap()->getRequestParams('ticket');
+        if (!$ticket) {
+            throw new Exception_Business('Ticket code was not provide');
+        }
+
+        $namApi = new NaMApi();
+        $response = $namApi->cancelTicketByCustomer($ticket);
+        $this->checkApiResponse($response);
+        Common::notify('Vận đơn đã được hủy theo yêu cầu của bạn !');
+        return true;
     }
 } 

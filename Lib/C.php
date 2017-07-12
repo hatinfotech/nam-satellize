@@ -43,4 +43,7 @@ class C {
     const CANCElFORWARD = 'CANCElFORWARD';
     const CLI = 'CLI';
     const WEB = 'WEB';
+    const updateTransBusinessLocation = 'updateTransBusinessLocation';
+    const cleanTransBusinessLocation = 'cleanTransBusinessLocation';
+    const createTransBusinessLocation = 'createTransBusinessLocation';
 }

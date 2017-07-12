@@ -5,7 +5,7 @@
  * Date: 22/3/2017
  * Time: 11:29 AM
  */
-$provinceList = Common::getLocationsByParent("VIETNA0001");
+$provinceList = Common::getBusinessLocationsByParent("VIETNA0001");
 ?>
 <h1 class="tit_mid" itemprop="name">GỬI YÊU CẦU SHIP HÀNG</h1>
 
@@ -16,26 +16,26 @@ $provinceList = Common::getLocationsByParent("VIETNA0001");
     <label class="control-label">Người gửi <span
             style="color:red">(*)</span></label>
     <input name="FromSenderContactName" type="text" class="form-control"
-        placeholder="Nhập tên người gửi" value="<?php echo $_SESSION[K::USER_INFO][K::Name]; ?>" required tabindex="10"/>
+        placeholder="Nhập tên người gửi" value="<?php echo $_SESSION[K::USER_INFO][K::Name]; ?>" required/>
 </div>
 <div class="col-md-4 form-group">
     <label class="control-label">Số điện thoại người gửi <span
             style="color:red">(*)</span></label>
     <input name="FromSenderContactPhone" value="<?php echo $_SESSION[K::USER_INFO][K::Phone]; ?>" type="text" class="form-control"
-        placeholder="Nhập SĐT người gửi" required tabindex="20"/>
+        placeholder="Nhập SĐT người gửi" required/>
 </div>
 <div class="col-md-8 form-group">
     <label class="control-label">Ngày yêu cầu lấy hàng</label>
-    <input name="DateOfReceive" type="date" class="form-control" value="<?php echo date('Y-m-d'); ?>" tabindex="20"/>
+    <input name="DateOfReceive" type="date" class="form-control" value="<?php echo date('Y-m-d'); ?>"/>
 </div>
 <div class="col-md-4 form-group">
     <label class="control-label">Giờ yêu cầu gửi hàng</label>
-    <input name="TimeOfReceive" type="time" class="form-control" tabindex="30"/>
+    <input name="TimeOfReceive" type="time" class="form-control"/>
 </div>
 
 <div class="col-md-4 form-group">
     <label class="control-label">Tỉnh/Thành phố</label>
-    <select name="FromProvince" type="time" class="form-control" tabindex="40">
+    <select name="FromProvince" type="time" class="form-control">
         <option class="label">Chọn Tỉnh/Thành phố</option>
         <?php foreach ($provinceList as $province) {
             ?>
@@ -46,13 +46,13 @@ $provinceList = Common::getLocationsByParent("VIETNA0001");
 </div>
 <div class="col-md-4 form-group">
     <label class="control-label">Quận/Huyện</label>
-    <select name="FromDistrict" type="time" class="form-control" tabindex="50">
+    <select name="FromDistrict" type="time" class="form-control">
         <option class="label">Chọn Quận/Huyện</option>
     </select>
 </div>
 <div class="col-md-4 form-group">
     <label class="control-label">Phường/Xã</label>
-    <select name="FromVillage" type="time" class="form-control" tabindex="60">
+    <select name="FromVillage" type="time" class="form-control">
         <option class="label">Phường/Xã</option>
     </select>
 </div>
@@ -65,7 +65,7 @@ $provinceList = Common::getLocationsByParent("VIETNA0001");
     <label class="control-label">Địa chỉ lấy hàng <span
             style="color:red">(*)</span></label>
     <input name="ShipFrom" type="text" value="<?php echo $_SESSION[K::USER_INFO][K::Address]; ?>" class="form-control"
-        placeholder="Địa chỉ shipper sẽ đến nhận hàng đi giao" required tabindex="70" list="address-history"/>
+        placeholder="Địa chỉ shipper sẽ đến nhận hàng đi giao" required list="address-history"/>
 </div>
 <div class="clearfix"></div>
 <hr style="margin-left: 15px; margin-right: 15px"/>
@@ -73,27 +73,27 @@ $provinceList = Common::getLocationsByParent("VIETNA0001");
     <label class="control-label">Người nhận <span
             style="color:red">(*)</span></label>
     <input name="ReceiverName" type="text" class="form-control"
-        placeholder="Nhập tên người nhận" required tabindex="80"/>
+        placeholder="Nhập tên người nhận" required/>
 </div>
 <div class="col-md-4 form-group">
     <label class="control-label">Số điện thoại người nhận <span
             style="color:red">(*)</span></label>
     <input name="ReceiverPhone" type="text" class="form-control"
-        placeholder="Nhập SĐT người nhận" required tabindex="80"/>
+        placeholder="Nhập SĐT người nhận" required/>
 </div>
 <div class="col-md-8 form-group">
     <label class="control-label">Ngày yêu cầu nhận hàng <span
             style="color:red">(*)</span></label>
-    <input name="DateOfReceive" type="date" class="form-control" tabindex="90" required/>
+    <input name="DateOfReceive" type="date" class="form-control" required/>
 </div>
 <div class="col-md-4 form-group">
     <label class="control-label">Giờ yêu cầu nhận hàng</label>
-    <input name="TimeOfReceive" type="time" class="form-control" tabindex="100"/>
+    <input name="TimeOfReceive" type="time" class="form-control"/>
 </div>
 
 <div class="col-md-4 form-group">
     <label class="control-label">Tỉnh/Thành phố</label>
-    <select name="ToProvince" type="time" class="form-control" tabindex="110">
+    <select name="ToProvince" type="time" class="form-control">
         <option class="label">Chọn Tỉnh/Thành phố</option>
         <?php foreach ($provinceList as $province) {
             ?>
@@ -104,13 +104,13 @@ $provinceList = Common::getLocationsByParent("VIETNA0001");
 </div>
 <div class="col-md-4 form-group">
     <label class="control-label">Quận/Huyện</label>
-    <select name="ToDistrict" type="time" class="form-control" tabindex="120">
+    <select name="ToDistrict" type="time" class="form-control">
         <option class="label">Chọn Quận/Huyện</option>
     </select>
 </div>
 <div class="col-md-4 form-group">
     <label class="control-label">Phường/Xã</label>
-    <select name="ToVillage" type="time" class="form-control" tabindex="130">
+    <select name="ToVillage" type="time" class="form-control">
         <option class="label">Phường/Xã</option>
     </select>
 </div>
@@ -119,19 +119,19 @@ $provinceList = Common::getLocationsByParent("VIETNA0001");
     <label class="control-label">Địa chỉ nhận hàng <span
             style="color:red">(*)</span></label>
     <input name="ShipTo" type="text" class="form-control"
-        placeholder="Địa chỉ shipper sẽ gửi hàng tới" required tabindex="140"/>
+        placeholder="Địa chỉ shipper sẽ gửi hàng tới" required/>
 </div>
 <div class="clearfix"></div>
 <hr style="margin-left: 15px;  margin-right:15px;"/>
 <div class="col-md-8 form-group">
     <label class="control-label">Tên hàng hóa</label>
     <input name="GoodsName" type="text" class="form-control"
-        placeholder="Tên hàng hóa cần gửi" tabindex="150"/>
+        placeholder="Tên hàng hóa cần gửi"/>
 </div>
 <div class="col-md-4 form-group">
     <label class="control-label">Hình ảnh hàng hóa</label>
     <input name="GoodsImage" type="file" accept=".png,.jpg,.jpge"
-        class="form-control" tabindex="160"/>
+        class="form-control"/>
 </div>
 <div class="col-md-8 form-group">
     <label class="control-label">Thanh toán phí ship : </label>
@@ -139,13 +139,13 @@ $provinceList = Common::getLocationsByParent("VIETNA0001");
     <div class="form-control" style="height: initial">
         <label style="line-height: 20px">
             <input name="PayFor" type="radio" value="SENDER"
-                class="form-control_" required tabindex="170"/>
+                class="form-control_" required/>
             Người gửi
         </label>
         /
         <label>
             <input name="PayFor" type="radio" value="RECEIVER"
-                class="form-control_" required tabindex="180"/>
+                class="form-control_" required/>
             Người nhận
         </label>
 
@@ -155,7 +155,7 @@ $provinceList = Common::getLocationsByParent("VIETNA0001");
 
 <div class="col-md-4 form-group">
     <label class="control-label">Cân nặng (kg)</label>
-    <input name="Weight" type="number" class="form-control" tabindex="181" required/>
+    <input name="Weight" type="number" class="form-control" required/>
 </div>
 <div class="clearfix"></div>
 
@@ -165,19 +165,19 @@ $provinceList = Common::getLocationsByParent("VIETNA0001");
     <div class="form-control" style="height: initial">
         <label style="line-height: 20px">
             <input name="IsCodOrAdvancePayment" type="radio" value="false"
-                class="choosePaymentCost" tabindex="170" checked/>
+                class="choosePaymentCost" checked/>
             Không áp dụng
         </label>
         /
         <label style="line-height: 20px">
             <input name="IsCodOrAdvancePayment" type="radio" value="IsCashOnDelivery"
-                class="choosePaymentCost" tabindex="171"/>
+                class="choosePaymentCost"/>
             Thu hộ
         </label>
         /
         <label>
             <input name="IsCodOrAdvancePayment" type="radio" value="IsAdvancePayment"
-                class="choosePaymentCost" tabindex="172"/>
+                class="choosePaymentCost"/>
             Tạm ứng
         </label>
 
@@ -187,12 +187,12 @@ $provinceList = Common::getLocationsByParent("VIETNA0001");
 <div class="col-md-4 form-group cashOnDelivery" style="display: none">
     <label class="control-label">Tiền thu hộ</label>
     <input name="CashOnDelivery" type="text" class="form-control"
-        placeholder="Tiền thu hộ" tabindex="150"/>
+        placeholder="Tiền thu hộ"/>
 </div>
 <div class="col-md-4 form-group advancePayment" style="display: none">
     <label class="control-label">Tiền ứng</label>
     <input name="AdvancePayment" type="text" class="form-control"
-        placeholder="Tiền ứng trước" tabindex="150"/>
+        placeholder="Tiền ứng trước"/>
 </div>
 <div class="clearfix"></div>
 <hr style="margin-left: 15px;  margin-right:15px;"/>
@@ -242,7 +242,7 @@ $provinceList = Common::getLocationsByParent("VIETNA0001");
 
 <div class="col-md-12 form-group">
     <input type="submit" name="SendTicketRequest" class="btn btn-success"
-        value="GỬI YÊU CẦU" tabindex="190"/>
+        value="GỬI YÊU CẦU"/>
 </div>
 <div class="clearfix"></div>
 </form>

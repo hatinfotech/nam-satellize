@@ -23,6 +23,7 @@ class Config_Sunnetnamsoftwarecom_Parameter extends Config_Parameter {
         $this->parameter[K::COPYRIGHT] = '© Copyright 2006 - 2017 by sunnet.namsoftware.com. All Rights Reserved';
         $this->parameter[K::BACKUP_PLANE] = 'BKP016173';
         $this->parameter[K::NO_DB] = true;
+        $this->parameter[K::PLATFORM] = 'windows';
     }
 
 }

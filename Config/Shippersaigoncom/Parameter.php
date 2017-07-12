@@ -22,6 +22,7 @@ class Config_Shippersaigoncom_Parameter extends Config_Parameter {
         );
         $this->parameter[K::SITE_CODE] = 'shippersaigon.com';
         $this->parameter[K::NAM_API_URl] = 'http://spsg.namsoftware.com';
+        $this->parameter[K::PLATFORM] = 'windows';
     }
 
 }

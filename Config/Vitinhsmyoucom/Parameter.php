@@ -22,6 +22,7 @@ class Config_Vitinhsmyoucom_Parameter extends Config_Parameter {
         );
         $this->parameter[K::SITE_CODE] = 'vitinhsmyou.com';
         $this->parameter[K::NAM_API_URl] = 'http://trans.namsoftware.com';
+        $this->parameter[K::PLATFORM] = 'windows';
     }
 
 }

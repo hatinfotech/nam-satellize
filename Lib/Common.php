@@ -62,8 +62,8 @@ class Common {
      * @return array
      */
     public static function getBanner($code) {
-        $banner = Db::a("SELECT * FROM web_banner WHERE `Code` = " . Db::s($code));
-        $banner[K::Details] = Db::a("SELECT * FROM web_banner_detail WHERE Banner = " . Db::s($code));
+        $banner = Db::f("SELECT * FROM web_banner WHERE `Code` = " . Db::s($code));
+        $banner[K::Details] = Db::a("SELECT * FROM web_banner_detail WHERE Banner = " . Db::s($banner[K::Id]) . " ORDER BY `Order`");
         return $banner;
     }
 
@@ -125,6 +125,25 @@ class Common {
      */
     public static function getLocationsByParent($parent) {
         return Db::a("SELECT Code,FullName,ShortName FROM location WHERE Parent = " . Db::s($parent) . " ORDER BY FullName ASC", array(K::IndexColumns => K::Code));
+    }
+
+    /**
+     * Get locations by parent
+     * @param $parent
+     * @return array
+     */
+    public static function getBusinessLocationsByParent($parent) {
+        $q = "
+          SELECT Code,FullName,ShortName
+          FROM location
+          WHERE Parent = " . Db::s($parent) . "
+                && (Code IN (SELECT District FROM trans_business_district)
+                    || Code IN (SELECT Province FROM trans_business_district)
+                    || Code IN (SELECT Location FROM trans_business_location))
+          ORDER BY FullName ASC
+          ";
+        //echo $q;
+        return Db::a($q, array(K::IndexColumns => K::Code));
     }
 
     public static function printArr($array) {

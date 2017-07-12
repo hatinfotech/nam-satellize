@@ -22,6 +22,7 @@ class Config_Tadsgnamsoftwarecom_Parameter extends Config_Parameter {
         $this->parameter[K::SITE_CODE] = 'vantoc.com';
         $this->parameter[K::COPYRIGHT] = '© Copyright 2006 - 2017 by vantoc.com. All Rights Reserved';
         $this->parameter[K::NO_DB] = true;
+        $this->parameter[K::PLATFORM] = 'windows';
     }
 
 }

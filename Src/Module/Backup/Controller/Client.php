@@ -87,6 +87,7 @@ class Backup_Controller_Client extends Controller {
                 echo "Current remote size : $pos\n";
                 $pos = $pos < 0 ? 0 : $pos;
                 if (ftp_put($connId, $remotePath . '/' . $remoteFile, $file, FTP_BINARY, $pos)) {
+                    ftp_chmod($connId, 777, $remotePath . '/' . $remoteFile);
                     break;
                 }
                 echo "Continue upload file (try $try/$maxTry)\n";
@@ -94,7 +95,6 @@ class Backup_Controller_Client extends Controller {
                     throw new Exception_Business("There was a problem while uploading $file");
                 }
             }
-
 
             // close the connection
             ftp_close($connId);
@@ -215,7 +215,7 @@ class Backup_Controller_Client extends Controller {
                         unlink($previousBackupFile);
                         // write backup history with remote filename
                         echo "write backup history with remote filename\n";
-                        $api->writeBackupHistory($plane['Code'], $location['Name'], $previousBackupFile, 'SUCCESS');
+                        $api->writeBackupHistory($plane['Code'], $location['Name'], $location['LastRunningFile'], 'SUCCESS');
                         $api->updateLocationLastRunningStateAsSuccess($location[K::Id], $location['LastRunningFile']);
                     }
                 }
@@ -306,6 +306,17 @@ class Backup_Controller_Client extends Controller {
         //if ($headers[0] == 'HTTP/1.1 200 OK') {
         //    print_r($contents['response']);
         //}
+    }
+
+    public function testAction() {
+        $this->setWorkWithTemplate(false);
+        $connId = ftp_connect('tch1.ddns.net', 21);
+
+        $login_result = ftp_login($connId, 'backup', 'mtsg@513733');
+        ftp_pasv($connId, true);
+        $remoteFile = 'BKP106177/Sunnet/Sunnet_2017_06_20_14_04_22.7z';
+        var_dump(ftp_chmod($connId, 777, $remoteFile));
+        ftp_close($connId);
     }
 
 } 

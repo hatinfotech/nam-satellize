@@ -1,0 +1,43 @@
+/* Site override css */
+.bg_menu {
+    background: green;
+    background: -webkit-linear-gradient(green, rgb(29, 84, 6));
+    background: -o-linear-gradient(green, rgb(29, 84, 6));
+    background: -moz-linear-gradient(green, rgb(29, 84, 6));
+    background: linear-gradient(#1ab31a, rgb(29, 84, 6));
+}
+
+.nav-menu > .menu-item:hover {
+    background: rgb(29, 84, 6);
+    background: -webkit-linear-gradient(rgb(29, 84, 6), green);
+    background: -o-linear-gradient(rgb(29, 84, 6), green);
+    background: -moz-linear-gradient(rgb(29, 84, 6), green);
+    background: linear-gradient(rgb(29, 84, 6), green)
+}
+
+.bg_header {
+    background: #1b8f12;
+}
+
+.list_menu_top li a {
+    color: #fff;
+}
+
+.tit_mid {
+    background: #1b8f12;
+}
+
+.tit_left {
+    margin: 0;
+    background-color: #1b8f12;
+    background-position: 0;
+}
+
+.butt_search {
+    background: #1b8f12;
+}
+
+.group_search {
+    border: 2px solid #1b8f12;
+    background: #1b8f12;
+}

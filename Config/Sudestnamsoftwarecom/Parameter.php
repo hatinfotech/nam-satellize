@@ -23,6 +23,7 @@ class Config_Sudestnamsoftwarecom_Parameter extends Config_Parameter {
         $this->parameter[K::COPYRIGHT] = '© Copyright 2006 - 2017 by sudest.namsoftware.com. All Rights Reserved';
         $this->parameter[K::BACKUP_PLANE] = 'BKP226172';
         $this->parameter[K::NO_DB] = true;
+        $this->parameter[K::PLATFORM] = 'windows';
     }
 
 }

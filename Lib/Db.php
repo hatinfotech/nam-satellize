@@ -46,6 +46,11 @@ class Db {
     protected $connection;
 
     /**
+     * @var int
+     */
+    protected $transactionCount;
+
+    /**
      * @param $overrideConfig
      */
     function __construct($overrideConfig) {
@@ -84,6 +89,36 @@ class Db {
      */
     public static function g() {
         return self::getInstance();
+    }
+
+    public function beginTransaction() {
+        if (!$this->transactionCount++) {
+            $this->query("START TRANSACTION");
+        }
+        $this->query('SAVEPOINT trans' . $this->transactionCount);
+        return $this->transactionCount >= 0 ? $this : false;
+    }
+
+    public static function bt() {
+        return self::g()->beginTransaction();
+    }
+
+    public function commit() {
+        $this->query("COMMIT");
+        return $this;
+    }
+
+    public static function ct() {
+        return self::g()->commit();
+    }
+
+    public function rollback() {
+        $this->query("ROLLBACK");
+        return $this;
+    }
+
+    public static function rt() {
+        return self::g()->rollback();
     }
 
     /**

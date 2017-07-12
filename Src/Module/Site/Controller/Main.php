@@ -144,7 +144,7 @@ class Site_Controller_Main extends Controller {
             $this->productInCatePage = 1;
         }
         $offset = ($this->productInCatePage - 1) * $this->productInCateNumPerPage;
-        $totalProduct = Db::f("SELECT count(*) as TotalProduct FROM product p LEFT JOIN product_in_category ic ON p.Code = ic.Product LEFT JOIN product_category c ON ic.Category = c.Code WHERE c.UniqueKey = " . Db::getSQLValueString($this->productCateUniqueKey));
+        $totalProduct = Db::f("SELECT count(*) AS TotalProduct FROM product p LEFT JOIN product_in_category ic ON p.Code = ic.Product LEFT JOIN product_category c ON ic.Category = c.Code WHERE c.UniqueKey = " . Db::getSQLValueString($this->productCateUniqueKey));
         $this->productInCateTotalPage = ceil($totalProduct['TotalProduct'] / $this->productInCateNumPerPage);
         //echo "\$numPerPage = $this->productInCateNumPerPage\n\$page=$this->productInCatePage\n\$offset=$offset\n\$totalPage=$this->productInCateTotalPage";
 
@@ -189,7 +189,8 @@ class Site_Controller_Main extends Controller {
         if (!$parent) {
             throw new Exception('no enough condition for get location list');
         }
-        $locationList = Common::getLocationsByParent($parent);
+        $locationList = Common::getBusinessLocationsByParent($parent);
+        //$locationList = Db::a("SELECT Code,FullName,ShortName FROM location WHERE Parent = " . Db::s($parent) . " && (Code IN (SELECT District FROM trans_business_district) || Code IN (SELECT Province FROM trans_business_district) || Code IN (SELECT Location FROM trans_business_location)) ORDER BY FullName ASC", array(K::IndexColumns => K::Code));
         echo json_encode(array(
             K::returnKey => true,
             K::data => $locationList

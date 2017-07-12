@@ -315,8 +315,13 @@ li.col-menu-type {
 }
 
 .bg_menu {
-    background: url("../img/bg_menu.png");
+    /*background: url("../img/bg_menu.png");*/
     background-size: 100% 100%;
+    background: blue;
+    background: -webkit-linear-gradient(blue, rgb(43, 53, 148));
+    background: -o-linear-gradient(blue, rgb(43, 53, 148));
+    background: -moz-linear-gradient(blue, rgb(43, 53, 148));
+    background: linear-gradient(blue, rgb(43, 53, 148))
 }
 
 .fixed > .bg_mid_top {
@@ -1053,8 +1058,8 @@ p.MsoNormal {
 
 .border-box {
     border: 1px solid #e5e5e5;
-    border-bottom-left-radius: 15px;
-    border-bottom-right-radius: 15px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
     padding-bottom: 12px;
     padding: 10px;
 }
@@ -1212,4 +1217,12 @@ p.MsoNormal {
 
 .ticket-list tr.new {
 
+}
+
+.select2-results .select2-result-label {
+    color: #000;
+}
+
+.form-control .select2-choice {
+    border-color: #ccc;
 }

@@ -188,4 +188,9 @@ class K {
     const NewestTime = 'NewestTime';
     const NO_DB = 'NO_DB';
     const PLATFORM = 'PLATFORM';
+    const District = 'District';
+    const Province = 'Province';
+    const Note = 'Note';
+    const Locations = 'Locations';
+    const Location = 'Location';
 }

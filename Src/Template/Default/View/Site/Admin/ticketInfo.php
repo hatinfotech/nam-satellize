@@ -132,7 +132,8 @@
     <!--            Tầng trệt, tòa nhà Rosana 60 Nguyễn Đình Chiểu, P. Đakao, Q.1, TP.HCM-->
     <!--        </div>-->
     <div class="col-xs-7 print-company-info">
-        ...</div>
+        ...
+    </div>
     <div class="col-xs-5 print-logo">
         <img class="print-logo-image" src="<?php echo Config_Parameter::g(K::uploadPath) . '/' . Common::getSiteInfo(C::WEB_META_LOGO); ?>" border="0">
     </div>
@@ -387,7 +388,8 @@
 
 
 <div class="clearfix clearfix-20"></div>
-<a class="btn btn-success btn-block" role="button" href="/danh-sach-van-don/page-<?php echo $this->prevTicketListPage?>.html">Trở về danh sách vận đơn</a>
+<a class="btn btn-success pull-left" role="button" href="/danh-sach-van-don/page-<?php echo $this->prevTicketListPage; ?>.html"><i class="fa fa-reply"></i> Trở về danh sách vận đơn</a>
+<a class="btn btn-danger pull-right" onclick="return confirm('Bạn có muốn hủy vận đơn này không ?')" role="button" href="/Site/Admin/cancelTicket?ticket=<?php echo $this->ticket[K::Code]; ?>"><i class="fa fa-remove"></i> Hủy vận đơn</a>
 
 <div class="clearfix clearfix-20"></div>
 

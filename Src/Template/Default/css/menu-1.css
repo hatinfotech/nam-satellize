@@ -383,8 +383,13 @@ html {
         float: left;
     }
     .nav-menu > .menu-item:hover {
-        background: url("../img/bg_hv_menu.png");
+        /*background: url("../img/bg_hv_menu.png");*/
         background-size: 100% 100%;
+        background: rgb(43, 53, 148);
+        background: -webkit-linear-gradient(rgb(43, 53, 148), blue);
+        background: -o-linear-gradient(rgb(43, 53, 148), blue);
+        background: -moz-linear-gradient(rgb(43, 53, 148), blue);
+        background: linear-gradient(rgb(43, 53, 148), blue)
     }
     .nav-menu > .has-dropdown > .menu-link {
         padding-right: 20px;

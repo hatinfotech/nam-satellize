@@ -20,6 +20,7 @@ class Config_Devvitinhsmyoucom_Parameter extends Config_Parameter {
             K::charset => 'utf8',
         );
         $this->parameter[K::SITE_CODE] = 'dev.vitinhsmyou.com';
+        $this->parameter[K::PLATFORM] = 'windows';
     }
 
 }

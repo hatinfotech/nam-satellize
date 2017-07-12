@@ -188,6 +188,10 @@ class NaMApi {
         return $this->requestTransApi('getTicketInfo', array(K::ticket => $ticketCode));
     }
 
+    public function cancelTicketByCustomer($ticketCode) {
+        return $this->requestTransApi('cancelTicketByCustomer', array(K::ticket => $ticketCode));
+    }
+
     public function getSuggestPrices($locationFrom, $locationTo, $weight, $isCashOnDelivery, $cashOnDelivery, $isAdvancePayment, $advancePayment) {
         return $this->requestTransApi('getSuggestPrices', array(
             K::locationFrom => $locationFrom,

@@ -121,18 +121,7 @@
                     <div><a href="#"><img u="image"
                                 src="<?php echo Config_Parameter::g(K::uploadPath) . '/' . $item[K::Image];; ?>"/></a>
                     </div>
-                <?php
-                }
-
-                ?>
-                <!--                <div><a href="#"><img u="image" src="img/headerbanner/cc.jpg"/></a></div>-->
-                <!--                <div><a href="#"><img u="image" src="img/headerbanner/ha1.jpg"/></a></div>-->
-                <!--                <div><a href="#"><img u="image" src="img/headerbanner/ha3.jpg"/></a></div>-->
-                <!--                <div><a href="#"><img u="image" src="img/headerbanner/ha4.jpg"/></a></div>-->
-                <!--                <div><a href="#"><img u="image" src="img/headerbanner/ha5.jpg"/></a></div>-->
-                <!--                <div><a href="#"><img u="image" src="img/headerbanner/ha7.jpg"/></a></div>-->
-                <!--<div><a href="#"><img u="image" src="img/headerbanner/ha8.jpg"/></a></div>-->
-                <!--<div><a href="#"><img u="image" src="img/headerbanner/ha9.jpg"/></a></div>-->
+                <?php } ?>
             </div>
             <div u="navigator" class="jssorb21" style="position: absolute; bottom: 26px; left: 6px;">
                 <div u="prototype"

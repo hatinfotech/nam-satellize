@@ -20,6 +20,7 @@ class Config_Devshippersaigoncom_Parameter extends Config_Parameter {
         );
         $this->parameter[K::NAM_API_URl] = 'https://local.namsoftware.com';
         $this->parameter[K::SITE_CODE] = 'dev.shippersaigon.com';
+        $this->parameter[K::PLATFORM] = 'windows';
     }
 
 }
