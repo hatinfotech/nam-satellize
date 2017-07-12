@@ -162,8 +162,13 @@ class Site_Controller_Admin extends Site_Controller_Main {
 
         $namApi = new NaMApi();
         $response = $namApi->cancelTicketByCustomer($ticket);
-        $this->checkApiResponse($response);
-        Common::notify('Vận đơn đã được hủy theo yêu cầu của bạn !');
-        return true;
+        try {
+            $this->checkApiResponse($response);
+            Common::notify('Vận đơn đã được hủy theo yêu cầu của bạn !');
+            return true;
+        } catch (Exception $e) {
+            Common::notify($e->getMessage());
+            return false;
+        }
     }
 } 

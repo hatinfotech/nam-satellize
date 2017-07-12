@@ -110,6 +110,14 @@ class Site_Controller_Main extends Controller {
 
     }
 
+    public function sendContactAction() {
+        $api = NaMApi::g();
+        $response = $api->sendContact($_POST);
+        $this->checkApiResponse($response);
+        Common::notify('Cảm ơn bạn đã liên hệ với chứng tôi, thông tin sẽ được phản hổi trong thời gian sớm nhất !');
+        return true;
+    }
+
     public function articleAction() {
         $uniqueKey = $this->getBootstrap()->getRequestParams('UniqueKey');
         $this->post = Db::f($q = "SELECT * FROM web_post WHERE UniqueKey = " . Db::s($uniqueKey) . " ");

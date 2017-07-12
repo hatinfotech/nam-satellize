@@ -5,6 +5,7 @@ class NaMApi {
     private $url;
     protected $transApiPath = 'Transportation/WebApi/request';
     protected $salesApiPath = 'Sales/WebApi/request';
+    protected $webAdminApi = 'WebAdmin/Api/request';
     protected $backupApiPath = 'Backup/Api/request';
     private $secureSalt;
     private $timeout = 300;
@@ -44,6 +45,10 @@ class NaMApi {
 
     protected function requestSalesApi($cmd, $parameters = array(), $data = array()) {
         return $this->requestApi($this->salesApiPath, $cmd, $parameters, $data);
+    }
+
+    protected function requestWebAdminApi($cmd, $parameters = array(), $data = array()) {
+        return $this->requestApi($this->webAdminApi, $cmd, $parameters, $data);
     }
 
     protected function requestBackupApi($cmd, $parameters = array(), $data = array()) {
@@ -202,6 +207,10 @@ class NaMApi {
             K::isAdvancePayment => $isAdvancePayment,
             K::advancePayment => $advancePayment,
         ));
+    }
+
+    public function sendContact($data) {
+        return $this->requestWebAdminApi('sendContact', null, $data);
     }
 
     public function order($data) {
