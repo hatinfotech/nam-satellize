@@ -250,6 +250,11 @@ class Backup_Controller_Client extends Controller {
 
                 if (count($schedules) > 0) {
                     // Store pid
+                    $curPid = file_get_contents(BASE_DIR . '/backup-run.pid');
+                    if($curPid && Common::checkProcessRunning($curPid)){
+                        echo "Previous process was ran, ski for wait\n";
+                        continue;
+                    }
                     file_put_contents(BASE_DIR . '/backup-run.pid', getmypid());
                 }
 
