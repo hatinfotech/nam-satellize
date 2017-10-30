@@ -175,6 +175,26 @@ class Common {
         $_SESSION[K::LAST_NOTIFICATION] = $message;
         header('Location: /thong-bao.html');
     }
+
+    public static function checkProcessRunning($pid) {
+        $output = array();
+        $return = null;
+        if (Config_Parameter::g(K::PLATFORM) == 'windows') {
+            exec('tasklist /fi "PID eq ' . $pid . '"', $output, $return);
+            return $output[2] ? true : false;
+        } elseif (Config_Parameter::g(K::PLATFORM) == 'linux') {
+            exec("ps x | grep $pid", $output, $return);
+            foreach ($output as $item) {
+                if (preg_match('/^' . $pid . '/', $item, $matched)) {
+                    return true;
+                }
+                //                print_r($matched);
+            }
+            //            print_r($output);
+            return false;
+        }
+        throw new Exception_Business('Check process for ' . Config_Parameter::g(K::PLATFORM) . ' was not support');
+    }
 }
 
 function __trans($message) {

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="4285fa45-8c57-49b5-a38b-14a3583b3901" name="NaM-Satellite" url="http://103.249.100.159">
+        <fileTransfer host="103.249.100.159" port="22" rootFolder="/backup/nam-backup-client" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

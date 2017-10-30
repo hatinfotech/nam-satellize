@@ -193,4 +193,5 @@ class K {
     const Note = 'Note';
     const Locations = 'Locations';
     const Location = 'Location';
+    const PreCommand = 'PreCommand';
 }

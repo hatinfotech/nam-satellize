@@ -6,7 +6,7 @@
  * Date: 18/3/2017
  * Time: 09:45 AM
  */
-class Config_Namnamsoftwarecom_Parameter extends Config_Parameter {
+class Config_Windowsnamsoftwarecom_Parameter extends Config_Parameter {
 
     function __construct() {
         parent::__construct();

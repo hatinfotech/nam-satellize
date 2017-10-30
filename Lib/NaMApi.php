@@ -120,7 +120,7 @@ class NaMApi {
      * @return array
      */
     public function createTicket($data, $imageFile, $excelFile) {
-//        $tokenKey = $requestTokenKey = $this->getTokenKey();
+        //        $tokenKey = $requestTokenKey = $this->getTokenKey();
         $onLevelData = array();
         foreach ($data as $item) {
 
@@ -235,12 +235,20 @@ class NaMApi {
         ));
     }
 
-    public function writeBackupHistory($plane, $locationName, $backupFileName, $status) {
+    public function updateBackupScheduleToFailState($id) {
+        return $this->requestBackupApi('updateBackupScheduleToFailState', array(
+            'schedule' => $id
+        ));
+    }
+
+    public function writeBackupHistory($plane, $locationName, $backupFileName, $state, $log = null) {
         return $this->requestBackupApi('writeBackupHistory', array(
             'plane' => $plane,
             'locationName' => $locationName,
             'backupFileName' => $backupFileName,
-            'status' => $status
+            'state' => $state
+        ), array(
+            'log' => $log
         ));
     }
 
@@ -266,9 +274,18 @@ class NaMApi {
         ));
     }
 
-    public function updateLiveStatus($plane) {
+    public function updateLocationLastRunningState($locationId, $fileName, $state) {
+        return $this->requestBackupApi('updateLocationLastRunningState', array(
+            'location' => $locationId,
+            'fileName' => $fileName,
+            'state' => $state
+        ));
+    }
+
+    public function updateLiveStatus($plane, $backupProcessState) {
         return $this->requestBackupApi('updateLiveStatus', array(
             'plane' => $plane,
+            'backupProcessState' => $backupProcessState
         ));
     }
 
