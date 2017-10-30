@@ -227,7 +227,9 @@ class Backup_Controller_Client extends Controller {
                                 throw new Exception_Business('System could not continue upload backup file to ftp server');
                             }
                             // remove backup file on local
-                            unlink($previousBackupFile);
+                            if(!unlink($previousBackupFile)){
+                                echo "System could not remove previous backup file\n";
+                            }
                             // write backup history with remote filename
                             echo "write backup history with remote filename\n";
                             $log .= ob_get_clean();
