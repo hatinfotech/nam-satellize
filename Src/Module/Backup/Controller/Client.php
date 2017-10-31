@@ -270,8 +270,8 @@ class Backup_Controller_Client extends Controller {
                         //$previousRemoteFileSize = $this->getRemoteFileSize($location['LastRunningFile'], $ftpInfo);
                         $previousRemoteFileSize = $this->getRemoteFileSize($plane['Code'] . '/' . $location['Name'] . '/' . $location['LastRunningFile'], $ftpConn);
 //                        $previousRemoteFileSize = $getSizeResponse[K::data];
-                        echo "\$previousLocalFileSize($previousLocalFileSize)\n";
-                        echo "\$previousRemoteFileSize($previousRemoteFileSize)\n";
+                        echo "local : $previousLocalFileSize ($previousLocalFileSize)\n";
+                        echo "remote : $previousRemoteFileSize($previousRemoteFileSize)\n";
                         if ($previousRemoteFileSize < $previousLocalFileSize) {
                             if (!$this->uploadFile($previousBackupFile, $ftpInfo, $ftpConn)) {
                                 throw new Exception_Business('System could not continue upload backup file to ftp server');
