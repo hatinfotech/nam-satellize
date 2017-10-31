@@ -9,6 +9,11 @@
 class Backup_Controller_Client extends Controller {
 
     /**
+     * @var FTPClient
+     */
+    protected $ftpConnection;
+
+    /**
      * @param Bootstrap $bootstrap
      */
     function __construct($bootstrap) {
@@ -247,10 +252,15 @@ class Backup_Controller_Client extends Controller {
                 K::path => $plane['FtpPath'] . '/' . $plane['Code'],
             );
 
-            $ftpConn = ftp_connect($ftpInfo[K::host], $ftpInfo[K::port] ?: 21);
-            $login_result = ftp_login($ftpConn, $ftpInfo[K::username], $ftpInfo[K::password]);
-            ftp_pasv($ftpConn, true);
-            ftp_set_option($ftpConn, FTP_AUTOSEEK, true);
+            // Create ftp connection
+            $this->ftpConnection = new FTPClient($ftpInfo[K::host], $ftpInfo[K::port], FTPClient::TRANSFER_MODE_PASSIVE);
+            if (!$this->ftpConnection->login($ftpInfo[K::username], $ftpInfo[K::password])) {
+                throw new Exception_Business('System could not login ftp server');
+            }
+            //            $ftpConn = ftp_connect($ftpInfo[K::host], $ftpInfo[K::port] ?: 21);
+            //            $login_result = ftp_login($ftpConn, $ftpInfo[K::username], $ftpInfo[K::password]);
+            //            ftp_pasv($ftpConn, true);
+            //            ftp_set_option($ftpConn, FTP_AUTOSEEK, true);
 
             $locations = $plane['locations'];
             $schedules = $plane['schedules'];
@@ -276,9 +286,9 @@ class Backup_Controller_Client extends Controller {
                     $previousBackupFile = BASE_DIR . '/data/' . $location['LastRunningFile'];
                     $ftpInfo[K::path] = trim($plane['FtpPath'] . '/' . $plane['Code'] . '/' . $location['Name'], '/');
 
-                    if (!$login_result) {
-                        throw new Exception_Business('System could not login to server');
-                    }
+                    //                    if (!$login_result) {
+                    //                        throw new Exception_Business('System could not login to server');
+                    //                    }
                     echo "Check and reupload backup file of location\n";
                     print_r($location);
                     echo "\n";
@@ -288,7 +298,7 @@ class Backup_Controller_Client extends Controller {
                         $previousLocalFileSize = filesize($previousBackupFile);
                         //$previousRemoteFileSize = $this->getRemoteFileSize($location['LastRunningFile'], $ftpInfo);
                         $remoteFilePath = $plane['Code'] . '/' . $location['Name'] . '/' . $location['LastRunningFile'];
-                        $previousRemoteFileSize = $this->getRemoteFileSize($remoteFilePath, $ftpConn);
+                        $previousRemoteFileSize = $this->ftpConnection->getFileSize($remoteFilePath);
                         //                        $previousRemoteFileSize = $getSizeResponse[K::data];
                         echo "local : $previousBackupFile ($previousLocalFileSize)\n";
                         echo "remote : $remoteFilePath ($previousRemoteFileSize)\n";
@@ -296,7 +306,7 @@ class Backup_Controller_Client extends Controller {
                         ob_start();
                         $api->writeBackupHistory($plane['Code'], $location['Name'], $location['LastRunningFile'], 'REUPLOADING', "Reuploading backup file\n" . $log);
                         if ($previousRemoteFileSize < $previousLocalFileSize) {
-                            if (!$this->uploadFile($previousBackupFile, $ftpInfo, $ftpConn)) {
+                            if (!$this->ftpConnection->upload($previousLocalFileSize, $previousBackupFile, FTPClient::MODE_BINARY)) {
                                 throw new Exception_Business('System could not continue upload backup file to ftp server');
                             }
                             // remove backup file on local
@@ -441,6 +451,7 @@ class Backup_Controller_Client extends Controller {
                         }
 
                         $ftpInfo[K::path] = trim($plane['FtpPath'] . '/' . $plane['Code'] . '/' . $location['Name'], '/');
+                        $remoteFilePath = trim($plane['FtpPath'] . '/' . $plane['Code'] . '/' . $location['Name'] . '/' . $backupFileName, '/');
 
                         // Upload file
                         echo "Post backup file to ftp server\n";
@@ -449,7 +460,7 @@ class Backup_Controller_Client extends Controller {
                         ob_start();
                         $api->writeBackupHistory($plane['Code'], $location['Name'], $backupFileName, 'UPLOADING', "Start upload backup file\n" . $log);
                         $api->updateLocationLastRunningState($location[K::Id], $backupFileName, 'UPLOADING');
-                        if (!$this->uploadFile($backupFile, $ftpInfo, $ftpConn)) {
+                        if (!$this->ftpConnection->upload($backupFile, $remoteFilePath, FTPClient::MODE_BINARY)) {
                             echo "System could not upload backup file to ftp server, next fetch this backup file auto continue upload!\n";
                             $log .= ob_get_clean();
                             ob_start();
