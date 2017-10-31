@@ -13,6 +13,7 @@ class Backup_Controller_Client extends Controller {
      */
     function __construct($bootstrap) {
         parent::__construct($bootstrap);
+        $this->setWorkWithTemplate(false);
     }
 
     /**
