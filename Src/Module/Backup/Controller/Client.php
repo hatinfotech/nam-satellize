@@ -43,6 +43,7 @@ class Backup_Controller_Client extends Controller {
     }
 
     public function getRemoteFileSizeAction() {
+        $file = $this->getBootstrap()->getRequestParams('file');
         $connId = ftp_connect('tch1.ddns.net', 21);
         $login_result = ftp_login($connId, 'backup', 'mtsg@513733');
         ftp_pasv($connId, true);
@@ -52,7 +53,7 @@ class Backup_Controller_Client extends Controller {
         }
 
         echo "Remote file size : ";
-        echo $this->getRemoteFileSize("SUDESTUSERDATA/ACC/ACC_2017_10_31_00_00_02.7z", $connId);
+        echo $this->getRemoteFileSize($file, $connId);
         echo "\n";
 
         ftp_close($connId);
