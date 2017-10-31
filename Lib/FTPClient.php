@@ -451,6 +451,15 @@ class FTPClient implements FTPClient_FTPClientInterface,
             return false;
         }
 
+        // Set position
+        if ($startPosition > 0) {
+            $restResponse = $this->_request(sprintf("REST %s", $startPosition));
+            if ($restResponse['code'] != 350) {
+                error_log('Upload file from position was not support');
+                return false;
+            }
+        }
+
         $response = $this->_request(sprintf('STOR %s', $remoteFilename));
 
         if ($response['code'] !== 150 and $response['code'] !== 125) {
@@ -465,7 +474,7 @@ class FTPClient implements FTPClient_FTPClientInterface,
                     break;
                 }
                 echo "seek to point : $point\n";
-//                fseek($dataConnection, 10240, SEEK_CUR);
+                //                fseek($dataConnection, 10240, SEEK_CUR);
                 fseek($localFilePointer, 10240, SEEK_CUR);
             }
         }
