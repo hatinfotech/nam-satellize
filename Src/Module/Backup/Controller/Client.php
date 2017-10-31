@@ -80,7 +80,7 @@ class Backup_Controller_Client extends Controller {
             // set up basic connection
             if (!$ftpConn) {
                 $connId = ftp_connect($ftpInfo[K::host], $ftpInfo[K::port] ?: 21);
-
+                ftp_set_option($connId, FTP_AUTOSEEK, true);
                 // login with username and password
                 $login_result = ftp_login($connId, $ftpInfo[K::username], $ftpInfo[K::password]);
                 ftp_pasv($connId, true);
@@ -113,41 +113,46 @@ class Backup_Controller_Client extends Controller {
             $try = 0;
             $maxTry = 10;
             $api = NaMApi::g();
+            $stream = fopen($file, 'r');
             while (true) {
                 $try++;
                 //$pos = ftp_size($connId, $remotePath . '/' . $remoteFile);
                 $pos = $this->getRemoteFileSize($remotePath . '/' . $remoteFile, $connId);
                 echo "Current remote size : $pos\n";
                 $pos = $pos < 0 ? 0 : $pos;
-                if (ftp_put($connId, $remotePath . '/' . $remoteFile, $file, FTP_BINARY, $pos)) {
+                if (ftp_fput($connId, $remotePath . '/' . $remoteFile, $stream, FTP_BINARY)) {
                     ftp_chmod($connId, 777, $remotePath . '/' . $remoteFile);
-                    ftp_close($connId);
-                    sleep(15);
-                    $connId = ftp_connect($ftpInfo[K::host], $ftpInfo[K::port] ?: 21);
-
+                    //                    ftp_close($connId);
+                    //                    sleep(15);
+                    //                    $connId = ftp_connect($ftpInfo[K::host], $ftpInfo[K::port] ?: 21);
+                    //                    ftp_set_option ($connId, FTP_AUTOSEEK, true);
+                    //
                     // login with username and password
-                    $login_result = ftp_login($connId, $ftpInfo[K::username], $ftpInfo[K::password]);
-                    ftp_pasv($connId, true);
-                    echo "\$login_result = $login_result\n";
-                    if (!$login_result) {
-                        System::busError('Ftp login fail on retry connect');
-                        return false;
-                    }
+                    //                    $login_result = ftp_login($connId, $ftpInfo[K::username], $ftpInfo[K::password]);
+                    //                    ftp_pasv($connId, true);
+                    //                    echo "\$login_result = $login_result\n";
+                    //                    if (!$login_result) {
+                    //                        System::busError('Ftp login fail on retry connect');
+                    //                        return false;
+                    //                    }
+                    fclose($stream);
                     break;
                 }
                 echo "Continue upload file (try $try/$maxTry)\n";
                 if ($try >= $maxTry) {
+                    fclose($stream);
                     throw new Exception_Business("There was a problem while uploading $file");
                 }
             }
+            fclose($stream);
 
             // close the connection
-            if(!$ftpConn) {
+            if (!$ftpConn) {
                 ftp_close($connId);
             }
             return true;
         } catch (Exception $e) {
-            if(!$ftpConn) {
+            if (!$ftpConn) {
                 if ($connId) {
                     ftp_close($connId);
                 }
@@ -240,6 +245,7 @@ class Backup_Controller_Client extends Controller {
             $ftpConn = ftp_connect($ftpInfo[K::host], $ftpInfo[K::port] ?: 21);
             $login_result = ftp_login($ftpConn, $ftpInfo[K::username], $ftpInfo[K::password]);
             ftp_pasv($ftpConn, true);
+            ftp_set_option($ftpConn, FTP_AUTOSEEK, true);
 
             $locations = $plane['locations'];
             $schedules = $plane['schedules'];
