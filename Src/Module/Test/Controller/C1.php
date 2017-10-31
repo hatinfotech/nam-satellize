@@ -35,6 +35,20 @@ class Test_Controller_C1 extends Controller {
 
     }
 
+    public function getRemoteFileSizeAction() {
+
+        $remote = $this->getBootstrap()->getRequestParams('remote');
+
+        $ftpClient = new FTPClient('tch1.ddns.net');
+        if (!$ftpClient->login('backup', 'mtsg@513733')) {
+            throw new Exception_Business('Systen could not login to ftp server');
+        }
+
+        $size = $ftpClient->getFileSize($remote);
+        echo "Size : $size \n";
+    }
+
+
     public function getFileSizeAction() {
         echo Common::getFileSize($this->getBootstrap()->getRequestParams('file'));
     }
