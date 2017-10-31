@@ -470,6 +470,9 @@ class FTPClient implements FTPClient_FTPClientInterface,
             }
         }
 
+        echo "check end of local file:\n";
+        var_dump(feof($localFilePointer));
+
         while (feof($localFilePointer) === false) {
             fwrite($dataConnection, fread($localFilePointer, 10240), 10240);
         }
