@@ -376,7 +376,7 @@ class Backup_Controller_Client extends Controller {
                         $api->writeBackupHistory($plane['Code'], $location['Name'], $backupFileName, 'UPLOADING', "Start upload backup file\n" . $log);
                         $api->updateLocationLastRunningState($location[K::Id], $backupFileName, 'UPLOADING');
                         if (!$this->uploadFile($backupFile, $ftpInfo)) {
-                            echo 'System could not upload backup file to ftp server, next fetch this backup file auto continue upload';
+                            echo "System could not upload backup file to ftp server, next fetch this backup file auto continue upload!\n";
                             $log .= ob_get_clean();
                             ob_start();
                             $api->writeBackupHistory($plane['Code'], $location['Name'], $backupFileName, 'SUCCESS', "Backup complete but backup file not upload to server now, \nupload process will be continue at next fetch\n" . $log);
