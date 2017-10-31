@@ -17,6 +17,23 @@ class Test_Controller_C1 extends Controller {
         return new self($bootstrap);
     }
 
+    public function noneUploadAction() {
+        $source = $this->getBootstrap()->getRequestParams('src');
+        $destination = $this->getBootstrap()->getRequestParams('dst');
+        $ftpConn = ftp_connect('tch1.ddns.net');
+        if (!ftp_login($ftpConn, 'backup', 'mtsg@513733')) {
+            throw new Exception_Business('System could not login to ftp server');
+        }
+
+        if (!ftp_put($ftpConn, $destination, $source, FTP_BINARY, 1000000000)) {
+            throw new Exception_Business('System could not upload file to ftp server');
+        }
+
+        echo "Upload complete";
+
+        ftp_close($ftpConn);
+    }
+
     public function uploadAction() {
 
         $source = $this->getBootstrap()->getRequestParams('src');
@@ -27,7 +44,7 @@ class Test_Controller_C1 extends Controller {
             throw new Exception_Business('Systen could not login to ftp server');
         }
 
-        if (!$ftpClient->upload($source, $destination, FTPClient::MODE_BINARY,1000000000)) {
+        if (!$ftpClient->upload($source, $destination, FTPClient::MODE_BINARY, 1000000000)) {
             throw new Exception_Business('System could not upload file to ftp server');
         }
 
