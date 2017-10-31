@@ -38,13 +38,14 @@ class Test_Controller_C1 extends Controller {
 
         $source = $this->getBootstrap()->getRequestParams('src');
         $destination = $this->getBootstrap()->getRequestParams('dst');
+        $position = $this->getBootstrap()->getRequestParams('pos');
 
         $ftpClient = new FTPClient('tch1.ddns.net');
         if (!$ftpClient->login('backup', 'mtsg@513733')) {
             throw new Exception_Business('Systen could not login to ftp server');
         }
 
-        if (!$ftpClient->upload($source, $destination, FTPClient::MODE_BINARY, 1000000000)) {
+        if (!$ftpClient->upload($source, $destination, FTPClient::MODE_BINARY, $position)) {
             throw new Exception_Business('System could not upload file to ftp server');
         }
 
