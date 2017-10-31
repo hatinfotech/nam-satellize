@@ -113,14 +113,14 @@ class Backup_Controller_Client extends Controller {
             $try = 0;
             $maxTry = 10;
             $api = NaMApi::g();
-            $stream = fopen($file, 'r');
+//            $stream = fopen($file, 'r');
             while (true) {
                 $try++;
                 //$pos = ftp_size($connId, $remotePath . '/' . $remoteFile);
                 $pos = $this->getRemoteFileSize($remotePath . '/' . $remoteFile, $connId);
                 echo "Current remote size : $pos\n";
                 $pos = $pos < 0 ? 0 : $pos;
-                if (ftp_fput($connId, $remotePath . '/' . $remoteFile, $stream, FTP_BINARY)) {
+                if (ftp_put($connId, $remotePath . '/' . $remoteFile, $file, FTP_BINARY, $pos)) {
                     ftp_chmod($connId, 777, $remotePath . '/' . $remoteFile);
                     //                    ftp_close($connId);
                     //                    sleep(15);
@@ -135,16 +135,16 @@ class Backup_Controller_Client extends Controller {
                     //                        System::busError('Ftp login fail on retry connect');
                     //                        return false;
                     //                    }
-                    fclose($stream);
+//                    fclose($stream);
                     break;
                 }
                 echo "Continue upload file (try $try/$maxTry)\n";
                 if ($try >= $maxTry) {
-                    fclose($stream);
+//                    fclose($stream);
                     throw new Exception_Business("There was a problem while uploading $file");
                 }
             }
-            fclose($stream);
+//            fclose($stream);
 
             // close the connection
             if (!$ftpConn) {
