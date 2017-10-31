@@ -465,7 +465,7 @@ class FTPClient implements FTPClient_FTPClientInterface,
                     break;
                 }
                 echo "seek to point : $point\n";
-                fseek($dataConnection, 10240, SEEK_CUR);
+//                fseek($dataConnection, 10240, SEEK_CUR);
                 fseek($localFilePointer, 10240, SEEK_CUR);
             }
         }
