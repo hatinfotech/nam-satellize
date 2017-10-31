@@ -268,8 +268,8 @@ class Backup_Controller_Client extends Controller {
                         $api->writeBackupHistory($plane['Code'], $location['Name'], $location['LastRunningFile'], 'REUPLOADING', "Reuploading backup file\n" . $log);
                         $previousLocalFileSize = filesize($previousBackupFile);
                         //$previousRemoteFileSize = $this->getRemoteFileSize($location['LastRunningFile'], $ftpInfo);
-                        $getSizeResponse = $this->getRemoteFileSize($plane['Code'] . '/' . $location['Name'] . '/' . $location['LastRunningFile'], $ftpConn);
-                        $previousRemoteFileSize = $getSizeResponse[K::data];
+                        $previousRemoteFileSize = $this->getRemoteFileSize($plane['Code'] . '/' . $location['Name'] . '/' . $location['LastRunningFile'], $ftpConn);
+//                        $previousRemoteFileSize = $getSizeResponse[K::data];
                         echo "\$previousLocalFileSize($previousLocalFileSize)\n";
                         echo "\$previousRemoteFileSize($previousRemoteFileSize)\n";
                         if ($previousRemoteFileSize < $previousLocalFileSize) {
