@@ -336,7 +336,7 @@ class Backup_Controller_Client extends Controller {
                             unlink($listFile);
                         }
 
-                        if ($return > 0) {
+                        if (false && $return > 0) {//Skip compress checking
                             echo "Compress file fail\n";
                             unlink($backupFile);
                             throw new Exception_Business('Compress backup files was result failed');
