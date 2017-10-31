@@ -23,8 +23,24 @@ class Backup_Controller_Client extends Controller {
         return new self($bootstrap);
     }
 
-    protected function getRemoteFileSize($remoteFile) {
+    protected function getRemoteFileSize($remoteFile, $ftp) {
+        ftp_size($ftp, $remoteFile);
+    }
 
+    public function getRemoteFileSizeAction() {
+        $connId = ftp_connect('tch1.ddns.net', 21);
+        $login_result = ftp_login($connId, 'backup', 'mtsg@513733');
+        ftp_pasv($connId, true);
+        if (!$login_result) {
+            echo('Ftp login fail');
+            return false;
+        }
+
+        echo "Remote file size : ";
+        echo ftp_size($connId, "SUDESTUSERDATA/ACC/ACC_2017_10_31_00_00_02.7z");
+        echo "\n";
+
+        ftp_close($connId);
     }
 
     /**
@@ -136,8 +152,8 @@ class Backup_Controller_Client extends Controller {
     }
 
     public function liveAction() {
-//        echo "git fetch --all && git reset --hard origin/master\n";
-//        echo exec("git fetch --all && git reset --hard origin/master") . "\n";
+        //        echo "git fetch --all && git reset --hard origin/master\n";
+        //        echo exec("git fetch --all && git reset --hard origin/master") . "\n";
         sleep(15);
         $this->setWorkWithTemplate(false);
         $api = NaMApi::g();
