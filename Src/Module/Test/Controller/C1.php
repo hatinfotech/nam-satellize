@@ -17,6 +17,10 @@ class Test_Controller_C1 extends Controller {
         return new self($bootstrap);
     }
 
+    public function getFileSizeAction() {
+        echo Common::getFileSize($this->getBootstrap()->getRequestParams('file'));
+    }
+
     public function checkProcessAction() {
         error_reporting(0);
         $pid = $this->getBootstrap()->getRequestParams('pid');
