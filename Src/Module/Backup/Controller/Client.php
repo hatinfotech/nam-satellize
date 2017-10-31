@@ -263,8 +263,6 @@ class Backup_Controller_Client extends Controller {
                     if ($location['LastRunningState'] == 'UPLOADING' && $location['LastRunningFile'] && file_exists($previousBackupFile)) {
                         echo "\$previousBackupFile : $previousBackupFile\n";
                         echo "Re upload previous backup file\n";
-                        $log .= ob_get_clean();
-                        ob_start();
                         $previousLocalFileSize = filesize($previousBackupFile);
                         //$previousRemoteFileSize = $this->getRemoteFileSize($location['LastRunningFile'], $ftpInfo);
                         $remoteFilePath = $plane['Code'] . '/' . $location['Name'] . '/' . $location['LastRunningFile'];
@@ -272,6 +270,8 @@ class Backup_Controller_Client extends Controller {
                         //                        $previousRemoteFileSize = $getSizeResponse[K::data];
                         echo "local : $previousBackupFile ($previousLocalFileSize)\n";
                         echo "remote : $remoteFilePath ($previousRemoteFileSize)\n";
+                        $log .= ob_get_clean();
+                        ob_start();
                         $api->writeBackupHistory($plane['Code'], $location['Name'], $location['LastRunningFile'], 'REUPLOADING', "Reuploading backup file\n" . $log);
                         if ($previousRemoteFileSize < $previousLocalFileSize) {
                             if (!$this->uploadFile($previousBackupFile, $ftpInfo, $ftpConn)) {
