@@ -315,7 +315,8 @@ class FTPClient implements FTPClient_FTPClientInterface,
 			return false;
 		}
 
-		return intval($matches['size']);
+//		return intval($matches['size']);
+		return $matches['size'];
 	}
 
 	/**
