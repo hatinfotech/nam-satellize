@@ -24,8 +24,22 @@ class Backup_Controller_Client extends Controller {
         return new self($bootstrap);
     }
 
-    protected function getRemoteFileSize($remoteFile, $ftp) {
-        ftp_size($ftp, $remoteFile);
+    protected function getRemoteFileSize($remoteFile, $ftpCon = null, $ftpInfo = null) {
+        $connection = null;
+        if (!$ftpCon) {
+            $connection = ftp_connect($ftpInfo[K::host], $ftpInfo[K::port] ?: 21);
+            $login_result = ftp_login($connection, $ftpInfo[K::username], $ftpInfo[K::password]);
+            if (!$login_result) {
+                throw new Exception_Business('System could not login to server');
+            }
+        } else {
+            $connection = $ftpCon;
+        }
+        $size = ftp_size($connection, $remoteFile);
+        if (!$ftpCon) {
+            ftp_close($connection);
+        }
+        return $size;
     }
 
     public function getRemoteFileSizeAction() {
@@ -38,7 +52,7 @@ class Backup_Controller_Client extends Controller {
         }
 
         echo "Remote file size : ";
-        echo ftp_size($connId, "SUDESTUSERDATA/ACC/ACC_2017_10_31_00_00_02.7z");
+        echo $this->getRemoteFileSize("SUDESTUSERDATA/ACC/ACC_2017_10_31_00_00_02.7z", $connId);
         echo "\n";
 
         ftp_close($connId);
