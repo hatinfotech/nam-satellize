@@ -297,7 +297,7 @@ class Backup_Controller_Client extends Controller {
                             echo "Output : \n";
                             print_r($output);
 
-                            if (false && $return > 0) { // skip check
+                            if ($return > 0) { // skip check
                                 throw new Exception_Business('Execute pre command result fail');
                             }
                         }
