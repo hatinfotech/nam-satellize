@@ -25,7 +25,7 @@ class Test_Controller_C1 extends Controller {
             throw new Exception_Business('System could not login to ftp server');
         }
 
-        if (!ftp_put($ftpConn, $destination, $source, FTP_BINARY, 10000)) {
+        if (!ftp_put($ftpConn, $destination, $source, FTP_BINARY, 1000000000)) {
             throw new Exception_Business('System could not upload file to ftp server');
         }
 
