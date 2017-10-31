@@ -116,12 +116,23 @@ class Backup_Controller_Client extends Controller {
             while (true) {
                 $try++;
                 //$pos = ftp_size($connId, $remotePath . '/' . $remoteFile);
-                $getSizeResponse = $api->getBackupFileSize($remotePath . '/' . $remoteFile);
-                $pos = $getSizeResponse[K::data];
+                $pos = $this->getRemoteFileSize($remotePath . '/' . $remoteFile, $connId);
                 echo "Current remote size : $pos\n";
                 $pos = $pos < 0 ? 0 : $pos;
                 if (ftp_put($connId, $remotePath . '/' . $remoteFile, $file, FTP_BINARY, $pos)) {
                     ftp_chmod($connId, 777, $remotePath . '/' . $remoteFile);
+                    ftp_close($connId);
+                    sleep(15);
+                    $connId = ftp_connect($ftpInfo[K::host], $ftpInfo[K::port] ?: 21);
+
+                    // login with username and password
+                    $login_result = ftp_login($connId, $ftpInfo[K::username], $ftpInfo[K::password]);
+                    ftp_pasv($connId, true);
+                    echo "\$login_result = $login_result\n";
+                    if (!$login_result) {
+                        System::busError('Ftp login fail on retry connect');
+                        return false;
+                    }
                     break;
                 }
                 echo "Continue upload file (try $try/$maxTry)\n";
