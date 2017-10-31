@@ -136,8 +136,8 @@ class Backup_Controller_Client extends Controller {
     }
 
     public function liveAction() {
-        echo "git fetch --all && git reset --hard origin/master\n";
-        echo exec("git fetch --all && git reset --hard origin/master") . "\n";
+//        echo "git fetch --all && git reset --hard origin/master\n";
+//        echo exec("git fetch --all && git reset --hard origin/master") . "\n";
         sleep(15);
         $this->setWorkWithTemplate(false);
         $api = NaMApi::g();
