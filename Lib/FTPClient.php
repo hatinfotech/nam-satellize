@@ -467,7 +467,7 @@ class FTPClient implements FTPClient_FTPClientInterface,
                 if ($point >= $startPosition) {
                     break;
                 }
-                echo "seek to point : $point\n";
+                //echo "seek to point : $point\n";
                 fseek($localFilePointer, 10240, SEEK_CUR);
             }
         }
@@ -478,11 +478,11 @@ class FTPClient implements FTPClient_FTPClientInterface,
             return false;
         }
 
-        echo "check end of local file:\n";
-        var_dump(feof($localFilePointer));
+        //echo "check end of local file:\n";
+        //var_dump(feof($localFilePointer));
 
         while (feof($localFilePointer) === false) {
-            echo "transfer file ..." . time() . "\n";
+            //echo "transfer file ..." . time() . "\n";
             fwrite($dataConnection, fread($localFilePointer, 10240), 10240);
         }
 
