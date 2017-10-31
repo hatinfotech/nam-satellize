@@ -108,8 +108,10 @@ class Backup_Controller_Client extends Controller {
                 }
             }
 
+            $remoteFilePath = $remotePath . '/' . $remoteFile;
 
             echo "\$remote_path : $remotePath \n";
+            echo "\$remote_file_path : $remoteFilePath \n";
             $pos = 0;
             $try = 0;
             $maxTry = 10;
@@ -118,11 +120,11 @@ class Backup_Controller_Client extends Controller {
             while (true) {
                 $try++;
                 //$pos = ftp_size($connId, $remotePath . '/' . $remoteFile);
-                $pos = $this->getRemoteFileSize($remotePath . '/' . $remoteFile, $connId);
+                $pos = $this->getRemoteFileSize($remoteFilePath, $connId);
                 echo "Current remote size : $pos\n";
                 $pos = $pos < 0 ? 0 : $pos;
-                if (ftp_put($connId, $remotePath . '/' . $remoteFile, $file, FTP_BINARY, $pos)) {
-                    ftp_chmod($connId, 777, $remotePath . '/' . $remoteFile);
+                if (ftp_put($connId, $remoteFilePath, $file, FTP_BINARY, $pos)) {
+                    ftp_chmod($connId, 777, $remoteFilePath);
                     //                    ftp_close($connId);
                     //                    sleep(15);
                     //                    $connId = ftp_connect($ftpInfo[K::host], $ftpInfo[K::port] ?: 21);
