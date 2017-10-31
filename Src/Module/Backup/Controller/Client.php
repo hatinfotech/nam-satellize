@@ -185,6 +185,7 @@ class Backup_Controller_Client extends Controller {
     public function runAction($immediate = false) {
         ob_start();
         $log = '';
+        $ftpConn = null;
         set_time_limit(0);
         error_reporting(E_ALL);
         try {
@@ -217,6 +218,9 @@ class Backup_Controller_Client extends Controller {
                 K::path => $plane['FtpPath'] . '/' . $plane['Code'],
             );
 
+            $ftpConn = ftp_connect($ftpInfo[K::host], $ftpInfo[K::port] ?: 21);
+            $login_result = ftp_login($ftpConn, $ftpInfo[K::username], $ftpInfo[K::password]);
+
             $locations = $plane['locations'];
             $schedules = $plane['schedules'];
 
@@ -240,6 +244,10 @@ class Backup_Controller_Client extends Controller {
                     echo "Check for previous running state\n";
                     $previousBackupFile = BASE_DIR . '/data/' . $location['LastRunningFile'];
                     $ftpInfo[K::path] = trim($plane['FtpPath'] . '/' . $plane['Code'] . '/' . $location['Name'], '/');
+
+                    if (!$login_result) {
+                        throw new Exception_Business('System could not login to server');
+                    }
                     echo "Check and reupload backup file of location\n";
                     print_r($location);
                     echo "\n";
@@ -251,7 +259,7 @@ class Backup_Controller_Client extends Controller {
                         $api->writeBackupHistory($plane['Code'], $location['Name'], $location['LastRunningFile'], 'REUPLOADING', "Reuploading backup file\n" . $log);
                         $previousLocalFileSize = filesize($previousBackupFile);
                         //$previousRemoteFileSize = $this->getRemoteFileSize($location['LastRunningFile'], $ftpInfo);
-                        $getSizeResponse = $api->getBackupFileSize($plane['Code'] . '/' . $location['Name'] . '/' . $location['LastRunningFile']);
+                        $getSizeResponse = $this->getRemoteFileSize($plane['Code'] . '/' . $location['Name'] . '/' . $location['LastRunningFile'], $ftpConn);
                         $previousRemoteFileSize = $getSizeResponse[K::data];
                         echo "\$previousLocalFileSize($previousLocalFileSize)\n";
                         echo "\$previousRemoteFileSize($previousRemoteFileSize)\n";
@@ -448,8 +456,13 @@ class Backup_Controller_Client extends Controller {
 
             }
 
+            ftp_close($ftpConn);
+
             return true;
         } catch (Exception $e) {
+            if ($ftpConn) {
+                fp_close($ftpConn);
+            }
             echo $e;
             return false;
         }
