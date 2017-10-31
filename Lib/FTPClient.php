@@ -453,20 +453,14 @@ class FTPClient implements FTPClient_FTPClientInterface,
 
         // Set position
         if ($startPosition > 0) {
+            // Set remote position
             $restResponse = $this->_request(sprintf("REST %s", $startPosition));
             if ($restResponse['code'] != 350) {
                 error_log('Upload file from position was not support');
                 return false;
             }
-        }
 
-        $response = $this->_request(sprintf('STOR %s', $remoteFilename));
-
-        if ($response['code'] !== 150 and $response['code'] !== 125) {
-            return false;
-        }
-
-        if ($startPosition) {
+            // Set local position
             $point = 0;
             while (true) {
                 $point += 10240;
@@ -474,9 +468,14 @@ class FTPClient implements FTPClient_FTPClientInterface,
                     break;
                 }
                 echo "seek to point : $point\n";
-                //                fseek($dataConnection, 10240, SEEK_CUR);
                 fseek($localFilePointer, 10240, SEEK_CUR);
             }
+        }
+
+        $response = $this->_request(sprintf('STOR %s', $remoteFilename));
+
+        if ($response['code'] !== 150 and $response['code'] !== 125) {
+            return false;
         }
 
         echo "check end of local file:\n";
