@@ -306,7 +306,7 @@ class Backup_Controller_Client extends Controller {
                         ob_start();
                         $api->writeBackupHistory($plane['Code'], $location['Name'], $location['LastRunningFile'], 'REUPLOADING', "Reuploading backup file\n" . $log);
                         if ($previousRemoteFileSize < $previousLocalFileSize) {
-                            if (!$this->ftpConnection->upload($previousBackupFile, $remoteFilePath, FTPClient::MODE_BINARY)) {
+                            if (!$this->ftpConnection->upload($previousBackupFile, $remoteFilePath, FTPClient::MODE_BINARY, $previousRemoteFileSize)) {
                                 throw new Exception_Business('System could not continue upload backup file to ftp server');
                             }
                             // remove backup file on local
