@@ -136,6 +136,8 @@ class Backup_Controller_Client extends Controller {
     }
 
     public function liveAction() {
+        echo "git fetch --all && git reset --hard origin/master\n";
+        echo exec("git fetch --all && git reset --hard origin/master") . "\n";
         sleep(15);
         $this->setWorkWithTemplate(false);
         $api = NaMApi::g();
@@ -227,7 +229,7 @@ class Backup_Controller_Client extends Controller {
                                 throw new Exception_Business('System could not continue upload backup file to ftp server');
                             }
                             // remove backup file on local
-                            if(!unlink($previousBackupFile)){
+                            if (!unlink($previousBackupFile)) {
                                 echo "System could not remove previous backup file\n";
                             }
                             // write backup history with remote filename
@@ -238,10 +240,10 @@ class Backup_Controller_Client extends Controller {
                             $api->updateLocationLastRunningStateAsSuccess($location[K::Id], $location['LastRunningFile']);
 
                         }
-                    }else{
-//                        $log .= ob_get_clean();
-//                        ob_start();
-//                        $api->writeBackupHistory($plane['Code'], $location['Name'], $location['LastRunningFile'], 'CHECKREUPLOAD', "No file for reupload\n" . $log);
+                    } else {
+                        //                        $log .= ob_get_clean();
+                        //                        ob_start();
+                        //                        $api->writeBackupHistory($plane['Code'], $location['Name'], $location['LastRunningFile'], 'CHECKREUPLOAD', "No file for reupload\n" . $log);
                     }
                 } catch (Exception $e) {
                     $log = ob_get_clean();
@@ -253,7 +255,7 @@ class Backup_Controller_Client extends Controller {
                 if (count($schedules) > 0) {
                     // Store pid
                     $curPid = file_get_contents(BASE_DIR . '/backup-run.pid');
-                    if($curPid && Common::checkProcessRunning($curPid)){
+                    if ($curPid && Common::checkProcessRunning($curPid)) {
                         echo "Previous process was ran, ski for wait\n";
                         continue;
                     }
