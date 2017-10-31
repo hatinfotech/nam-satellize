@@ -460,7 +460,7 @@ class FTPClient implements FTPClient_FTPClientInterface,
         if ($startPosition) {
             $point = 0;
             while (true) {
-                $point += 1024;
+                $point += 10240;
                 if ($point >= $startPosition) {
                     break;
                 }
