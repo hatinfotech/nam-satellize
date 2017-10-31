@@ -61,9 +61,10 @@ class Backup_Controller_Client extends Controller {
     /**
      * @param string $file
      * @param $ftpInfo
+     * @param null $ftpConn
      * @return bool
      */
-    protected function uploadFile($file, $ftpInfo) {
+    protected function uploadFile($file, $ftpInfo, $ftpConn = null) {
 
         $connId = null;
         try {
@@ -77,18 +78,20 @@ class Backup_Controller_Client extends Controller {
             print_r($ftpInfo);
 
             // set up basic connection
-            $connId = ftp_connect($ftpInfo[K::host], $ftpInfo[K::port] ?: 21);
+            if (!$ftpConn) {
+                $connId = ftp_connect($ftpInfo[K::host], $ftpInfo[K::port] ?: 21);
 
-            // login with username and password
-            $login_result = ftp_login($connId, $ftpInfo[K::username], $ftpInfo[K::password]);
-            ftp_pasv($connId, true);
-
-            if (!$login_result) {
-                System::busError('Ftp login fail');
-                return false;
+                // login with username and password
+                $login_result = ftp_login($connId, $ftpInfo[K::username], $ftpInfo[K::password]);
+                ftp_pasv($connId, true);
+                echo "\$login_result = $login_result\n";
+                if (!$login_result) {
+                    System::busError('Ftp login fail');
+                    return false;
+                }
+            } else {
+                $connId = $ftpConn;
             }
-
-            echo "\$login_result = $login_result\n";
 
             // upload a file
             $pathParts = explode('/', $remotePath);
@@ -128,12 +131,17 @@ class Backup_Controller_Client extends Controller {
             }
 
             // close the connection
-            ftp_close($connId);
-            return true;
-        } catch (Exception $e) {
-            if ($connId) {
+            if(!$ftpConn) {
                 ftp_close($connId);
             }
+            return true;
+        } catch (Exception $e) {
+            if(!$ftpConn) {
+                if ($connId) {
+                    ftp_close($connId);
+                }
+            }
+
             echo $e->getMessage();
             return false;
         }
@@ -220,6 +228,7 @@ class Backup_Controller_Client extends Controller {
 
             $ftpConn = ftp_connect($ftpInfo[K::host], $ftpInfo[K::port] ?: 21);
             $login_result = ftp_login($ftpConn, $ftpInfo[K::username], $ftpInfo[K::password]);
+            ftp_pasv($ftpConn, true);
 
             $locations = $plane['locations'];
             $schedules = $plane['schedules'];
@@ -264,7 +273,7 @@ class Backup_Controller_Client extends Controller {
                         echo "\$previousLocalFileSize($previousLocalFileSize)\n";
                         echo "\$previousRemoteFileSize($previousRemoteFileSize)\n";
                         if ($previousRemoteFileSize < $previousLocalFileSize) {
-                            if (!$this->uploadFile($previousBackupFile, $ftpInfo)) {
+                            if (!$this->uploadFile($previousBackupFile, $ftpInfo, $ftpConn)) {
                                 throw new Exception_Business('System could not continue upload backup file to ftp server');
                             }
                             // remove backup file on local
@@ -417,7 +426,7 @@ class Backup_Controller_Client extends Controller {
                         ob_start();
                         $api->writeBackupHistory($plane['Code'], $location['Name'], $backupFileName, 'UPLOADING', "Start upload backup file\n" . $log);
                         $api->updateLocationLastRunningState($location[K::Id], $backupFileName, 'UPLOADING');
-                        if (!$this->uploadFile($backupFile, $ftpInfo)) {
+                        if (!$this->uploadFile($backupFile, $ftpInfo, $ftpConn)) {
                             echo "System could not upload backup file to ftp server, next fetch this backup file auto continue upload!\n";
                             $log .= ob_get_clean();
                             ob_start();
