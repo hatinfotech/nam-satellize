@@ -17,6 +17,24 @@ class Test_Controller_C1 extends Controller {
         return new self($bootstrap);
     }
 
+    public function uploadAction() {
+
+        $source = $this->getBootstrap()->getRequestParams('src');
+        $destination = $this->getBootstrap()->getRequestParams('dst');
+
+        $ftpClient = new FTPClient('tch1.ddns.net');
+        if (!$ftpClient->login('backup', 'mtsg@513733')) {
+            throw new Exception_Business('Systen could not login to ftp server');
+        }
+
+        if (!$ftpClient->upload($source, $destination, FTPClient::MODE_BINARY)) {
+            throw new Exception_Business('System could not upload file to ftp server');
+        }
+
+        echo "Upload complete\n";
+
+    }
+
     public function getFileSizeAction() {
         echo Common::getFileSize($this->getBootstrap()->getRequestParams('file'));
     }
