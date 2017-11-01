@@ -464,11 +464,12 @@ class Backup_Controller_Client extends Controller {
                         // Update schedule state => READY
                         echo "update schedule state => READY\n";
                         if ($schedule) $api->updateBackupScheduleToReadyState($schedule[K::Id]);
+                        $api->writeBackupHistory($plane['Code'], $location['Name'], $backupFileName, 'SUCCESS', "Backup complete and file is now uploading to server\n" . $log);
                         if (!$this->ftpConnection->upload($backupFile, $remoteFilePath, FTPClient::MODE_BINARY)) {
                             echo "System could not upload backup file to ftp server, next fetch this backup file auto continue upload!\n";
                             $log .= ob_get_clean();
                             ob_start();
-                            $api->writeBackupHistory($plane['Code'], $location['Name'], $backupFileName, 'SUCCESS', "Backup complete but backup file not upload to server now, \nupload process will be continue at next fetch\n" . $log);
+                            $api->writeBackupHistory($plane['Code'], $location['Name'], $backupFileName, 'UPLOADFAILED', "Backup complete but backup file not upload to server now, \nupload process will be continue at next fetch\n" . $log);
                         } else {
                             // Remove backup file on local
                             echo "Remove backup file\n";
