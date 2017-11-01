@@ -329,8 +329,7 @@ class Backup_Controller_Client extends Controller {
                 } catch (Exception $e) {
                     $log = ob_get_clean();
                     $api->writeBackupHistory($plane['Code'], $location['Name'], $location['LastRunningFile'], 'REUPLOADFAILED', "Reupload backup file was failed\n" . $log);
-                    continue;
-
+                    throw new Exception_Business($e->getMessage(), $e->getCode(), $e);
                 }
 
 
@@ -505,7 +504,7 @@ class Backup_Controller_Client extends Controller {
 
             return true;
         } catch (Exception $e) {
-            if($this->ftpConnection) {
+            if ($this->ftpConnection) {
                 $this->ftpConnection->disconnect();
             }
             echo $e;
