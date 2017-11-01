@@ -229,6 +229,13 @@ class NaMApi {
         ));
     }
 
+    public function updateBackupScheduleState($id, $state) {
+        return $this->requestBackupApi('updateBackupScheduleState', array(
+            'schedule' => $id,
+            'state' => $state
+        ));
+    }
+
     public function updateBackupScheduleToReadyState($id) {
         return $this->requestBackupApi('updateBackupScheduleToReadyState', array(
             'schedule' => $id

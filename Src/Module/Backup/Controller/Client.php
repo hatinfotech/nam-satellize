@@ -333,15 +333,6 @@ class Backup_Controller_Client extends Controller {
 
                 }
 
-                if (count($schedules) > 0) {
-                    // Store pid
-                    $curPid = file_get_contents(BASE_DIR . '/backup-run.pid');
-                    if ($curPid && Common::checkProcessRunning($curPid)) {
-                        echo "Previous process was ran, ski for wait\n";
-                        continue;
-                    }
-                    file_put_contents(BASE_DIR . '/backup-run.pid', getmypid());
-                }
 
                 if ($immediate) {
                     echo "Run backup immediate\n";
@@ -350,6 +341,17 @@ class Backup_Controller_Client extends Controller {
 
                 // Backup file by schedule
                 foreach ($schedules as $schedule) {
+
+                    //                    if (count($schedules) > 0) {
+                    // Store pid
+                    $curPid = file_get_contents(BASE_DIR . '/backup-run.pid');
+                    if ($curPid && Common::checkProcessRunning($curPid)) {
+                        echo "Previous process was ran, ski for wait\n";
+                        if ($schedule) $api->updateBackupScheduleState($schedule[K::Id], 'WAITING');
+                        break;
+                    }
+                    file_put_contents(BASE_DIR . '/backup-run.pid', getmypid());
+                    //                    }
 
                     try {
                         echo "update schedule state => RUNNING, last running\n";
