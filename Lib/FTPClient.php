@@ -484,6 +484,9 @@ class FTPClient implements FTPClient_FTPClientInterface,
 
         while (feof($localFilePointer) === false) {
             echo time()." : transfer file ...\n";
+            echo "socket last error : \n";
+            print_r(socket_last_error($dataConnection));
+            echo "\n";
             fwrite($dataConnection, fread($localFilePointer, 10240), 10240);
         }
 
