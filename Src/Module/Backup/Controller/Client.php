@@ -501,12 +501,12 @@ class Backup_Controller_Client extends Controller {
 
             }
 
-            ftp_close($ftpConn);
+            $this->ftpConnection->disconnect();
 
             return true;
         } catch (Exception $e) {
-            if ($ftpConn) {
-                fp_close($ftpConn);
+            if($this->ftpConnection) {
+                $this->ftpConnection->disconnect();
             }
             echo $e;
             return false;
