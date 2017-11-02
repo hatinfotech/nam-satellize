@@ -14,16 +14,20 @@ class FTPClient implements FTPClient_FTPClientInterface,
     protected $features = null;
 
     /**
+     * @var FTPClient_Context
+     */
+    protected $context;
+
+    /**
      * Connect to the server and return the new FTPClientInterface object.
      * @param string $host
      * @param int $port
      * @param int $transferMode
-     * @throws RuntimeException If failed to connect to the server.
-     * @throws InvalidArgumentException
+     * @param null $context
      */
-    public function __construct($host, $port = 21, $transferMode = self::TRANSFER_MODE_PASSIVE) {
+    public function __construct($host, $port = 21, $transferMode = self::TRANSFER_MODE_PASSIVE, $context = null) {
+        $this->context = $context;
         $this->connection = fsockopen($host, $port, $errorCode, $errorMessage);
-
         if (is_resource($this->connection) === false) {
             throw new RuntimeException($errorMessage, $errorCode);
         }
@@ -485,7 +489,11 @@ class FTPClient implements FTPClient_FTPClientInterface,
             }
             $count++;
             if ($count % 100 == 0) {
-                echo number_format($startPosition + $count * 10240) . " byte \n";
+                $log = number_format($startPosition + $count * 10240) . " byte";
+                //                echo "$log\n";
+                if ($this->context) {
+                    $this->context->onUploadProcess($this, $startPosition + $count * 10240, $log);
+                }
             }
         }
 

@@ -6,7 +6,7 @@
  * Date: 30/5/2017
  * Time: 15:52
  */
-class Backup_Controller_Client extends Controller {
+class Backup_Controller_Client extends Controller implements FTPClient_Context {
 
     /**
      * @var FTPClient
@@ -527,4 +527,7 @@ class Backup_Controller_Client extends Controller {
         ftp_close($connId);
     }
 
-} 
+    public function onUploadProcess($ftpClient, $amountUploaded, $log) {
+        $this->writeLog($log);
+    }
+}
