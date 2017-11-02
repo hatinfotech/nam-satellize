@@ -460,16 +460,21 @@ class Backup_Controller_Client extends Controller {
                         $this->writeLog("update schedule state => READY");
                         if ($schedule) $api->updateBackupScheduleToReadyState($schedule[K::Id]);
                         $api->writeBackupHistory($plane['Code'], $location['Name'], $backupFileName, 'SUCCESS', "Backup complete and file is now uploading to server\n" . $log);
-                        if (!$this->ftpConnection->upload($backupFile, $remoteFilePath, FTPClient::MODE_BINARY)) {
+
+                        try {
+                            if (!$this->ftpConnection->upload($backupFile, $remoteFilePath, FTPClient::MODE_BINARY)) {
+                                throw new Exception_Business('Upload backup file fail');
+                            } else {
+                                // Remove backup file on local
+                                $this->writeLog("Remove backup file");
+                                unlink($backupFile);
+                                $api->writeBackupHistory($plane['Code'], $location['Name'], $backupFileName, 'SUCCESS', "BACKUP COMPLETE SUCCESSFUL\n" . $this->log);
+                                // Write backup history with remote filename
+                                $api->updateLocationLastRunningStateAsSuccess($location[K::Id], $backupFileName);
+                            }
+                        } catch (Exception $e) {
                             $this->writeLog("System could not upload backup file to ftp server, next fetch this backup file auto continue upload!");
                             $api->writeBackupHistory($plane['Code'], $location['Name'], $backupFileName, 'UPLOADFAILED', "Backup complete but backup file not upload to server now, \nupload process will be continue at next fetch\n" . $this->log);
-                        } else {
-                            // Remove backup file on local
-                            $this->writeLog("Remove backup file");
-                            unlink($backupFile);
-                            $api->writeBackupHistory($plane['Code'], $location['Name'], $backupFileName, 'SUCCESS', "BACKUP COMPLETE SUCCESSFUL\n" . $this->log);
-                            // Write backup history with remote filename
-                            $api->updateLocationLastRunningStateAsSuccess($location[K::Id], $backupFileName);
                         }
 
 

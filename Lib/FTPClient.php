@@ -414,8 +414,7 @@ class FTPClient implements FTPClient_FTPClientInterface,
      * @param int $mode self::MODE_ASCII or self::MODE_BINARY
      * @param int $startPosition = 0 (no limit)
      * @return bool If success return TRUE, fail return FALSE.
-     * @throws InvalidArgumentException
-     * @throws RuntimeException
+     * @throws Exception
      */
     public function upload($localFilename, $remoteFilename, $mode = 2, $startPosition = 0) {
         $modes = array(
