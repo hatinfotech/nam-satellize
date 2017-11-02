@@ -360,7 +360,7 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
                     // Store pid
                     $curPid = file_get_contents(BASE_DIR . '/backup-run.pid');
                     if ($curPid && Common::checkProcessRunning($curPid)) {
-                        $this->writeLog("Previous process was ran, ski for wait");
+                        $this->writeLog("Previous process was ran, skip for wait");
                         if ($schedule) $api->updateBackupScheduleState($schedule[K::Id], 'WAITING');
                         break;
                     }
