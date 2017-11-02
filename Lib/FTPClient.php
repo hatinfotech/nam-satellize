@@ -489,7 +489,7 @@ class FTPClient implements FTPClient_FTPClientInterface,
             }
             $count++;
             if ($count % 100 == 0) {
-                $log = number_format($startPosition + $count * 10240) . " byte";
+                $log = "Uploading $remoteFilename : ".number_format($startPosition + $count * 10240) . " byte";
                 //                echo "$log\n";
                 if ($this->context) {
                     $this->context->onUploadProcess($this, $startPosition + $count * 10240, $log);
