@@ -211,14 +211,25 @@ class Backup_Controller_Client extends Controller {
         print_r($result);
     }
 
+    protected $log = '';
+
+    protected function writeLog($log) {
+        if (is_array($log)) {
+            print_r($log);
+            echo "\n";
+            $this->log .= json_encode($log, JSON_PRETTY_PRINT) . "\n";
+        } else {
+            echo "$log\n";
+            $this->log .= "$log\n";
+        }
+    }
+
     /**
      * Run backup
      * @param bool $immediate
      * @return bool
      */
     public function runAction($immediate = false) {
-        ob_start();
-        $log = '';
         $ftpConn = null;
         set_time_limit(0);
         error_reporting(E_ALL);
@@ -238,8 +249,7 @@ class Backup_Controller_Client extends Controller {
             $api = NaMApi::g();
 
             $data = $api->getBackupPlane($plane);
-            print_r($data);
-            echo "\n";
+            $this->writeLog($data);
             if (!$data || !$data['return']) {
                 throw new Exception_Business("System could not get backup plane");
             }
@@ -265,7 +275,7 @@ class Backup_Controller_Client extends Controller {
             $locations = $plane['locations'];
             $schedules = $plane['schedules'];
 
-            echo "count : " . count($schedules) . "\n";
+            $this->writeLog("count : " . count($schedules));
 
             // Continue upload previous backup file
             foreach ($locations as $location) {
@@ -282,42 +292,38 @@ class Backup_Controller_Client extends Controller {
 
                 try {
                     // -----Re upload------------------------------
-                    echo "Check for previous running state\n";
+                    $this->writeLog("Check for previous running state");
                     $previousBackupFile = BASE_DIR . '/data/' . $location['LastRunningFile'];
                     $ftpInfo[K::path] = trim($plane['FtpPath'] . '/' . $plane['Code'] . '/' . $location['Name'], '/');
 
                     //                    if (!$login_result) {
                     //                        throw new Exception_Business('System could not login to server');
                     //                    }
-                    echo "Check and reupload backup file of location\n";
-                    print_r($location);
+                    $this->writeLog("Check and reupload backup file of location");
+                    $this->writeLog($location);
                     echo "\n";
                     if ($location['LastRunningState'] == 'UPLOADING' && $location['LastRunningFile'] && file_exists($previousBackupFile)) {
-                        echo "\$previousBackupFile : $previousBackupFile\n";
-                        echo "Re upload previous backup file\n";
+                        $this->writeLog("\$previousBackupFile : $previousBackupFile");
+                        $this->writeLog("Re upload previous backup file");
                         $previousLocalFileSize = filesize($previousBackupFile);
                         //$previousRemoteFileSize = $this->getRemoteFileSize($location['LastRunningFile'], $ftpInfo);
                         $remoteFilePath = $plane['Code'] . '/' . $location['Name'] . '/' . $location['LastRunningFile'];
                         $previousRemoteFileSize = $this->ftpConnection->getFileSize($remoteFilePath);
                         //                        $previousRemoteFileSize = $getSizeResponse[K::data];
-                        echo "local : $previousBackupFile ($previousLocalFileSize)\n";
-                        echo "remote : $remoteFilePath ($previousRemoteFileSize)\n";
-                        $log .= ob_get_clean();
-                        ob_start();
-                        $api->writeBackupHistory($plane['Code'], $location['Name'], $location['LastRunningFile'], 'REUPLOADING', "Reuploading backup file\n" . $log);
+                        $this->writeLog("local : $previousBackupFile ($previousLocalFileSize)");
+                        $this->writeLog("remote : $remoteFilePath ($previousRemoteFileSize)");
+                        $api->writeBackupHistory($plane['Code'], $location['Name'], $location['LastRunningFile'], 'REUPLOADING', "Reuploading backup file\n" . $this->log);
                         if ($previousRemoteFileSize < $previousLocalFileSize) {
                             if (!$this->ftpConnection->upload($previousBackupFile, $remoteFilePath, FTPClient::MODE_BINARY, $previousRemoteFileSize)) {
                                 throw new Exception_Business('System could not continue upload backup file to ftp server');
                             }
                             // remove backup file on local
                             if (!unlink($previousBackupFile)) {
-                                echo "System could not remove previous backup file\n";
+                                $this->writeLog("System could not remove previous backup file");
                             }
                             // write backup history with remote filename
-                            echo "write backup history with remote filename\n";
-                            $log .= ob_get_clean();
-                            ob_start();
-                            $api->writeBackupHistory($plane['Code'], $location['Name'], $location['LastRunningFile'], 'REUPLOADSUCCESSFUL', "Reupload backup file successful\n" . $log);
+                            $this->writeLog("write backup history with remote filename");
+                            $api->writeBackupHistory($plane['Code'], $location['Name'], $location['LastRunningFile'], 'REUPLOADSUCCESSFUL', "Reupload backup file successful\n" . $this->log);
                             $api->updateLocationLastRunningStateAsSuccess($location[K::Id], $location['LastRunningFile']);
 
                         }
@@ -327,14 +333,13 @@ class Backup_Controller_Client extends Controller {
                         //                        $api->writeBackupHistory($plane['Code'], $location['Name'], $location['LastRunningFile'], 'CHECKREUPLOAD', "No file for reupload\n" . $log);
                     }
                 } catch (Exception $e) {
-                    $log = ob_get_clean();
-                    $api->writeBackupHistory($plane['Code'], $location['Name'], $location['LastRunningFile'], 'REUPLOADFAILED', "Reupload backup file was failed\n" . $log);
+                    $api->writeBackupHistory($plane['Code'], $location['Name'], $location['LastRunningFile'], 'REUPLOADFAILED', "Reupload backup file was failed\n" . $this->log);
                     throw new Exception_Business($e->getMessage(), $e->getCode(), $e);
                 }
 
 
                 if ($immediate) {
-                    echo "Run backup immediate\n";
+                    $this->writeLog("Run backup immediate");
                     $schedules[] = false;
                 }
 
@@ -345,7 +350,7 @@ class Backup_Controller_Client extends Controller {
                     // Store pid
                     $curPid = file_get_contents(BASE_DIR . '/backup-run.pid');
                     if ($curPid && Common::checkProcessRunning($curPid)) {
-                        echo "Previous process was ran, ski for wait\n";
+                        $this->writeLog("Previous process was ran, ski for wait");
                         if ($schedule) $api->updateBackupScheduleState($schedule[K::Id], 'WAITING');
                         break;
                     }
@@ -353,33 +358,31 @@ class Backup_Controller_Client extends Controller {
                     //                    }
 
                     try {
-                        echo "update schedule state => RUNNING, last running\n";
+                        $this->writeLog("update schedule state => RUNNING, last running");
                         if ($schedule) $api->updateBackupScheduleToRunningState($schedule[K::Id]);
 
 
-                        echo "Backup for location\n";
-                        print_r($location);
+                        $this->writeLog("Backup for location");
+                        $this->writeLog($location);
 
-                        echo "Update location backing up\n";
+                        $this->writeLog("Update location backing up");
                         if ($schedule) $api->updateLocationBackingUp($schedule[K::Id], $location[K::Id], $backupFileName);
 
                         // Execute pre command
                         if ($location[K::PreCommand]) {
-                            echo "Pre Command execute : \n";
+                            $this->writeLog("Pre Command execute :");
 
-                            $log .= ob_get_clean();
-                            ob_start();
-                            $api->writeBackupHistory($plane['Code'], $location['Name'], $backupFileName, 'PRECOMMAND', "Execute pre command\n" . $log);
+                            $api->writeBackupHistory($plane['Code'], $location['Name'], $backupFileName, 'PRECOMMAND', "Execute pre command\n" . $this->log);
 
-                            echo $location[K::PreCommand] . "\n";
+                            $this->writeLog($location[K::PreCommand]);
                             $output = array();
                             $return = NULL;
                             exec($location[K::PreCommand], $output, $return);
 
-                            echo "Return : \n";
-                            print_r($return);
-                            echo "Output : \n";
-                            print_r($output);
+                            $this->writeLog("Return : ");
+                            $this->writeLog($return);
+                            $this->writeLog("Output : ");
+                            $this->writeLog($output);
 
                             if ($return > 0) { // skip check
                                 throw new Exception_Business('Execute pre command result fail');
@@ -388,9 +391,7 @@ class Backup_Controller_Client extends Controller {
 
                         // Compress backup files
                         echo "Compress target folder : \n";
-                        $log .= ob_get_clean();
-                        ob_start();
-                        $api->writeBackupHistory($plane['Code'], $location['Name'], $backupFileName, 'COMPRESS', "Compress target folder\n" . $log);
+                        $api->writeBackupHistory($plane['Code'], $location['Name'], $backupFileName, 'COMPRESS', "Compress target folder\n" . $this->log);
 
                         if ($newestTime) {
                             $fileList = $this->scanFile($folder, $newestTime ? $newestTime * 60 : null);
@@ -404,15 +405,15 @@ class Backup_Controller_Client extends Controller {
                             $cmd = '"' . $zip . '" a -t7z "' . $backupFile . '" "' . $folder . '"';
                         }
 
-                        echo $cmd . "\n";
+                        $this->writeLog($cmd);
                         $output = array();
                         $return = NULL;
                         exec($cmd, $output, $return);
 
-                        echo "Return\n";
-                        print_r($return);
-                        echo "Output\n";
-                        print_r($output);
+                        $this->writeLog("Return");
+                        $this->writeLog($return);
+                        $this->writeLog("Output");
+                        $this->writeLog($output);
 
                         if ($listFile) {
                             unlink($listFile);
@@ -420,32 +421,28 @@ class Backup_Controller_Client extends Controller {
 
                         // Check for compress (u2)
                         if (false && $return > 0) {//Skip compress checking
-                            echo "Compress file fail\n";
+                            $this->writeLog("Compress file fail");
                             unlink($backupFile);
                             throw new Exception_Business('Compress backup files was result failed');
                         }
 
                         // Check archive exists
                         if (!file_exists($backupFile)) {
-                            echo "Backup file was not exists\n";
+                            $this->writeLog("Backup file was not exists");
                             throw new Exception_Business('Could not compress folder');
                         }
 
                         // Test archive
-                        echo "Test archive : \n";
-                        $log .= ob_get_clean();
-                        ob_start();
-                        $api->writeBackupHistory($plane['Code'], $location['Name'], $backupFileName, 'TESTARCHIVE', "Test archive after compress\n" . $log);
+                        $this->writeLog("Test archive :");
+                        $api->writeBackupHistory($plane['Code'], $location['Name'], $backupFileName, 'TESTARCHIVE', "Test archive after compress\n" . $this->log);
                         $output = array();
                         $return = NULL;
                         exec('7za t "' . $backupFile . '"', $output, $return);
 
-                        echo "Return\n";
-                        print_r($return);
-                        echo "\n";
-                        echo "Output\n";
-                        print_r($output);
-                        echo "\n";
+                        $this->writeLog("Return");
+                        $this->writeLog($return);
+                        $this->writeLog("Output\n");
+                        $this->writeLog($output);
                         if ($return == 2) {
                             unlink($backupFile);
                             throw new Exception_Business('Check for archive was result failed');
@@ -455,46 +452,38 @@ class Backup_Controller_Client extends Controller {
                         $remoteFilePath = trim($plane['FtpPath'] . '/' . $plane['Code'] . '/' . $location['Name'] . '/' . $backupFileName, '/');
 
                         // Upload file
-                        echo "Post backup file to ftp server\n";
-                        echo "Set location last running => UPLOADING\n";
-                        $log .= ob_get_clean();
-                        ob_start();
-                        $api->writeBackupHistory($plane['Code'], $location['Name'], $backupFileName, 'UPLOADING', "Start upload backup file\n" . $log);
+                        $this->writeLog("Post backup file to ftp server");
+                        $this->writeLog("Set location last running => UPLOADING");
+                        $api->writeBackupHistory($plane['Code'], $location['Name'], $backupFileName, 'UPLOADING', "Start upload backup file\n" . $this->log);
                         $api->updateLocationLastRunningState($location[K::Id], $backupFileName, 'UPLOADING');
                         // Update schedule state => READY
-                        echo "update schedule state => READY\n";
+                        $this->writeLog("update schedule state => READY");
                         if ($schedule) $api->updateBackupScheduleToReadyState($schedule[K::Id]);
                         $api->writeBackupHistory($plane['Code'], $location['Name'], $backupFileName, 'SUCCESS', "Backup complete and file is now uploading to server\n" . $log);
                         if (!$this->ftpConnection->upload($backupFile, $remoteFilePath, FTPClient::MODE_BINARY)) {
-                            echo "System could not upload backup file to ftp server, next fetch this backup file auto continue upload!\n";
-                            $log .= ob_get_clean();
-                            ob_start();
-                            $api->writeBackupHistory($plane['Code'], $location['Name'], $backupFileName, 'UPLOADFAILED', "Backup complete but backup file not upload to server now, \nupload process will be continue at next fetch\n" . $log);
+                            $this->writeLog("System could not upload backup file to ftp server, next fetch this backup file auto continue upload!");
+                            $api->writeBackupHistory($plane['Code'], $location['Name'], $backupFileName, 'UPLOADFAILED', "Backup complete but backup file not upload to server now, \nupload process will be continue at next fetch\n" . $this->log);
                         } else {
                             // Remove backup file on local
-                            echo "Remove backup file\n";
+                            $this->writeLog("Remove backup file");
                             unlink($backupFile);
-                            $log .= ob_get_clean();
-                            ob_start();
-                            $api->writeBackupHistory($plane['Code'], $location['Name'], $backupFileName, 'SUCCESS', "BACKUP COMPLETE SUCCESSFUL\n" . $log);
+                            $api->writeBackupHistory($plane['Code'], $location['Name'], $backupFileName, 'SUCCESS', "BACKUP COMPLETE SUCCESSFUL\n" . $this->log);
                             // Write backup history with remote filename
                             $api->updateLocationLastRunningStateAsSuccess($location[K::Id], $backupFileName);
                         }
 
 
-                        echo "Write backup history with remote filename\n";
-                        echo "BACKUP COMPLETE SUCCESSFUL\n";
+                        $this->writeLog("Write backup history with remote filename");
+                        $this->writeLog("BACKUP COMPLETE SUCCESSFUL");
 
                     } catch (Exception $e) {
-                        echo $e;
+                        $this->writeLog((string)$e);
                         // Set job fail on archive result fail
-                        echo "update location last state => FAILED \n";
+                        $this->writeLog("update location last state => FAILED");
                         $api->updateLocationLastRunningStateAsFailed($location[K::Id], $backupFileName);
-                        echo "write backup history => FAILED \n";
+                        $this->writeLog("write backup history => FAILED");
                         if ($schedule) $api->updateBackupScheduleToFailState($schedule[K::Id]);
-                        $log .= ob_get_clean();
-                        echo $log . "\n";
-                        $api->writeBackupHistory($plane['Code'], $location['Name'], $backupFileName, 'FAILED', $e->getMessage() . "\n" . $log . "\nTrace:\n" . ($e->getTraceAsString()));
+                        $api->writeBackupHistory($plane['Code'], $location['Name'], $backupFileName, 'FAILED', $e->getMessage() . "\n" . $this->log . "\nTrace:\n" . ($e->getTraceAsString()));
                         throw new Exception_Business($e->getMessage(), $e->getCode(), $e);
                     }
                 }
