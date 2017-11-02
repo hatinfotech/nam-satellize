@@ -483,7 +483,7 @@ class FTPClient implements FTPClient_FTPClientInterface,
         //var_dump(feof($localFilePointer));
 
         while (feof($localFilePointer) === false) {
-//            echo time() . " : transfer file ...";
+            echo microtime() . " : transfer file ...";
             if (!fwrite($dataConnection, fread($localFilePointer, 10240), 10240)) {
                 return false;
             }
