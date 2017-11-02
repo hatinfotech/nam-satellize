@@ -235,9 +235,9 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
         $ftpConn = null;
         set_time_limit(0);
         error_reporting(E_ALL);
-        $plane = $this->bootstrap->getRequestParams('plane') ?: Config_Parameter::g(K::BACKUP_PLANE);
+        $planeCode = $this->bootstrap->getRequestParams('plane') ?: Config_Parameter::g(K::BACKUP_PLANE);
         try {
-            $this->writeLog("################ BACKUP FOR PLANE $plane ##################");
+            $this->writeLog("################ BACKUP FOR PLANE $planeCode ##################");
             $this->setWorkWithTemplate(false);
             $zip = null;
             if (Config_Parameter::g(K::PLATFORM) == 'windows') {
@@ -250,7 +250,7 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
             // Get backup info
             $api = NaMApi::g();
 
-            $data = $api->getBackupPlane($plane);
+            $data = $api->getBackupPlane($planeCode);
             $this->writeLog($data);
             if (!$data || !$data['return']) {
                 throw new Exception_Business("System could not get backup plane");
@@ -500,7 +500,7 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
 
             $this->ftpConnection->disconnect();
 
-            $this->writeLog("=================== BACKUP FOR PLANE $plane SUCCESSFUL =========================");
+            $this->writeLog("=================== BACKUP FOR PLANE $planeCode SUCCESSFUL =========================");
             return true;
         } catch (Exception $e) {
             if ($this->ftpConnection) {
@@ -508,7 +508,7 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
             }
             echo $e;
         }
-        $this->writeLog("=================== BACKUP FOR PLANE $plane FAILED =========================");
+        $this->writeLog("=================== BACKUP FOR PLANE $planeCode FAILED =========================");
         return false;
     }
 
