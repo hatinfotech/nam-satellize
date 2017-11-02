@@ -265,7 +265,7 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
             );
 
             // Create ftp connection
-            $this->ftpConnection = new FTPClient($ftpInfo[K::host], $ftpInfo[K::port], FTPClient::TRANSFER_MODE_PASSIVE);
+            $this->ftpConnection = new FTPClient($ftpInfo[K::host], $ftpInfo[K::port], FTPClient::TRANSFER_MODE_PASSIVE, $this);
             if (!$this->ftpConnection->login($ftpInfo[K::username], $ftpInfo[K::password])) {
                 throw new Exception_Business('System could not login ftp server');
             }
