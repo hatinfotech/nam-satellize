@@ -485,7 +485,7 @@ class FTPClient implements FTPClient_FTPClientInterface,
                 return false;
             }
             $count++;
-            if($count % 1024 == 0) {
+            if($count % 100 == 0) {
                 echo number_format($startPosition + $count * 10240) . " byte \n";
             }
         }
