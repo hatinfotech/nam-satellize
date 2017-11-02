@@ -500,6 +500,7 @@ class Backup_Controller_Client extends Controller {
 
             $this->ftpConnection->disconnect();
 
+            $this->writeLog("=================== BACKUP FOR PLANE $plane SUCCESSFUL =========================");
             return true;
         } catch (Exception $e) {
             if ($this->ftpConnection) {
@@ -507,7 +508,7 @@ class Backup_Controller_Client extends Controller {
             }
             echo $e;
         }
-        $this->writeLog("=================== END BACKUP FOR PLANE $plane =========================");
+        $this->writeLog("=================== BACKUP FOR PLANE $plane FAILED =========================");
         return false;
     }
 
