@@ -236,6 +236,8 @@ class Backup_Controller_Client extends Controller {
         set_time_limit(0);
         error_reporting(E_ALL);
         try {
+            $plane = $this->bootstrap->getRequestParams('plane') ?: Config_Parameter::g(K::BACKUP_PLANE);
+            $this->writeLog("################ BACKUP FOR PLANE $plane");
             $this->setWorkWithTemplate(false);
             $zip = null;
             if (Config_Parameter::g(K::PLATFORM) == 'windows') {
@@ -243,8 +245,6 @@ class Backup_Controller_Client extends Controller {
             } elseif (Config_Parameter::g(K::PLATFORM) == 'linux') {
                 $zip = '7za';
             }
-
-            $plane = $this->bootstrap->getRequestParams('plane') ?: Config_Parameter::g(K::BACKUP_PLANE);
 
 
             // Get backup info
