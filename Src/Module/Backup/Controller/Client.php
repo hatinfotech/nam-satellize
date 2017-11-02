@@ -214,14 +214,16 @@ class Backup_Controller_Client extends Controller {
     protected $log = '';
 
     protected function writeLog($log) {
+        $tmp = '';
         if (is_array($log)) {
             print_r($log);
             echo "\n";
-            $this->log .= json_encode($log, JSON_PRETTY_PRINT) . "\n";
+            $tmp = $this->log .= json_encode($log, JSON_PRETTY_PRINT) . "\n";
         } else {
             echo "$log\n";
-            $this->log .= "$log\n";
+            $tmp = $this->log .= "$log\n";
         }
+        error_log($tmp);
     }
 
     /**
