@@ -303,8 +303,16 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
                     //                    }
                     $this->writeLog("Check and reupload backup file of location");
                     $this->writeLog($location);
-                    echo "\n";
+
+                    // Check upload process
+                    $curPid = file_get_contents(BASE_DIR . '/uploading.pid');
+                    if ($curPid && Common::checkProcessRunning($curPid)) {
+                        $this->writeLog("Previous upload process was ran, skip for wait");
+                        break;
+                    }
+
                     if ($location['LastRunningState'] == 'UPLOADING' && $location['LastRunningFile'] && file_exists($previousBackupFile)) {
+                        file_put_contents(BASE_DIR . '/uploading.pid', getmypid());
                         $this->writeLog("\$previousBackupFile : $previousBackupFile");
                         $this->writeLog("Re upload previous backup file");
                         $previousLocalFileSize = filesize($previousBackupFile);
