@@ -482,10 +482,10 @@ class FTPClient implements FTPClient_FTPClientInterface,
         $count = 0;
         while (feof($localFilePointer) === false) {
             if (!fwrite($dataConnection, fread($localFilePointer, 10240), 10240)) {
-                return false;
+                throw new Exception('FTPClient could not continue upload file "' . $remoteFilename . '"');
             }
             $count++;
-            if($count % 100 == 0) {
+            if ($count % 100 == 0) {
                 echo number_format($startPosition + $count * 10240) . " byte \n";
             }
         }
