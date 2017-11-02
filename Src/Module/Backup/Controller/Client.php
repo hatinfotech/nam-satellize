@@ -235,9 +235,9 @@ class Backup_Controller_Client extends Controller {
         $ftpConn = null;
         set_time_limit(0);
         error_reporting(E_ALL);
+        $plane = $this->bootstrap->getRequestParams('plane') ?: Config_Parameter::g(K::BACKUP_PLANE);
         try {
-            $plane = $this->bootstrap->getRequestParams('plane') ?: Config_Parameter::g(K::BACKUP_PLANE);
-            $this->writeLog("################ BACKUP FOR PLANE $plane");
+            $this->writeLog("################ BACKUP FOR PLANE $plane ##################");
             $this->setWorkWithTemplate(false);
             $zip = null;
             if (Config_Parameter::g(K::PLATFORM) == 'windows') {
@@ -506,8 +506,9 @@ class Backup_Controller_Client extends Controller {
                 $this->ftpConnection->disconnect();
             }
             echo $e;
-            return false;
         }
+        $this->writeLog("=================== END BACKUP FOR PLANE $plane =========================");
+        return false;
     }
 
     public function runImmediateAction() {
