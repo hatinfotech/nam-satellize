@@ -400,7 +400,7 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
                         }
 
                         // Compress backup files
-                        echo "Compress target folder : \n";
+                        $this->writeLog("Compress target folder :");
                         $api->writeBackupHistory($plane['Code'], $location['Name'], $backupFileName, 'COMPRESS', "Compress target folder\n" . $this->log);
 
                         if ($newestTime) {
