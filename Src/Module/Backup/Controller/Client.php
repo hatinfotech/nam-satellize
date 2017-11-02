@@ -207,7 +207,14 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
         $this->setWorkWithTemplate(false);
         $api = NaMApi::g();
         $plane = $this->bootstrap->getRequestParams('plane');
-        $result = $api->updateLiveStatus($plane, Common::checkProcessRunning(file_get_contents(BASE_DIR . '/backup-run.pid')));
+
+        $curPid = file_get_contents(BASE_DIR . '/backup-run.pid');
+        $curPidParts = explode(' ', $curPid);
+        if ($curPid && $curPidParts && $plane == $curPidParts[1] && Common::checkProcessRunning($curPidParts[0])) {
+            $this->writeLog("Previous process was ran, skip for wait");
+        }
+
+        $result = $api->updateLiveStatus($plane, $curPid && $curPidParts && $plane == $curPidParts[1] && Common::checkProcessRunning($curPidParts[0]));
         print_r($result);
     }
 
@@ -356,16 +363,15 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
                 // Backup file by schedule
                 foreach ($schedules as $schedule) {
 
-                    //                    if (count($schedules) > 0) {
                     // Store pid
                     $curPid = file_get_contents(BASE_DIR . '/backup-run.pid');
-                    if ($curPid && Common::checkProcessRunning($curPid)) {
+                    $curPidParts = explode(' ', $curPid);
+                    if ($curPid && $curPidParts && Common::checkProcessRunning($curPidParts[0])) {
                         $this->writeLog("Previous process was ran, skip for wait");
                         if ($schedule) $api->updateBackupScheduleState($schedule[K::Id], 'WAITING');
                         break;
                     }
-                    file_put_contents(BASE_DIR . '/backup-run.pid', getmypid());
-                    //                    }
+                    file_put_contents(BASE_DIR . '/backup-run.pid', getmypid() . " " . $planeCode);
 
                     try {
                         $this->writeLog("update schedule state => RUNNING, last running");
