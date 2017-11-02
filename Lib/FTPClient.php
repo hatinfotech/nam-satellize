@@ -479,18 +479,13 @@ class FTPClient implements FTPClient_FTPClientInterface,
             return false;
         }
 
-        //echo "check end of local file:\n";
-        //var_dump(feof($localFilePointer));
-
-//        $clock = time();
-
+        $count = 0;
         while (feof($localFilePointer) === false) {
-            if (time() % 5 == 0) {
-                echo microtime() . " : transfer file ...\n";
-            }
             if (!fwrite($dataConnection, fread($localFilePointer, 10240), 10240)) {
                 return false;
             }
+            $count++;
+            echo number_format($count * 10240) . " byte \n";
         }
 
         return true;
