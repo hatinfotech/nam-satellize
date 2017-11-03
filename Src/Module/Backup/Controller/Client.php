@@ -14,6 +14,17 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
     protected $ftpConnection;
 
     /**
+     * @var string
+     */
+    protected $log = '';
+
+    /**
+     * @var string
+     */
+    protected $plane;
+
+
+    /**
      * @param Bootstrap $bootstrap
      */
     function __construct($bootstrap) {
@@ -218,8 +229,6 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
         print_r($result);
     }
 
-    protected $log = '';
-
     protected function writeLog($log) {
         $tmp = '';
         if (is_array($log)) {
@@ -232,7 +241,7 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
             $tmp = $log;
             $this->log .= "$tmp\n";
         }
-        error_log($tmp);
+        error_log("{$this->plane} : $tmp");
     }
 
     /**
@@ -245,6 +254,7 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
         set_time_limit(0);
         error_reporting(E_ALL);
         $planeCode = $this->bootstrap->getRequestParams('plane') ?: Config_Parameter::g(K::BACKUP_PLANE);
+        $this->plane = $planeCode;
         try {
             $this->writeLog("################ BACKUP FOR PLANE $planeCode ##################");
             $this->setWorkWithTemplate(false);
