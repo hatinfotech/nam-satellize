@@ -502,7 +502,7 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
                             }
                         } catch (Exception $e) {
                             $this->writeLog("System could not upload backup file to ftp server, next fetch this backup file auto continue upload!");
-                            $this->writeLog((string)$e);
+                            $this->writeLog($e->getMessage());
                             $api->writeBackupHistory($plane['Code'], $location['Name'], $backupFileName, 'UPLOADFAILED', "Backup complete but backup file not upload to server now, \nupload process will be continue at next fetch\n" . $this->log);
                         }
 
@@ -511,7 +511,7 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
                         $this->writeLog("BACKUP COMPLETE SUCCESSFUL");
 
                     } catch (Exception $e) {
-                        $this->writeLog((string)$e);
+                        $this->writeLog($e->getMessage());
                         // Set job fail on archive result fail
                         $this->writeLog("update location last state => FAILED");
                         $api->updateLocationLastRunningStateAsFailed($location[K::Id], $backupFileName);
