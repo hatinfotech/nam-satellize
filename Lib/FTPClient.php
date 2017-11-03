@@ -634,6 +634,9 @@ class FTPClient implements FTPClient_FTPClientInterface,
         );
 
         while (true) {
+            if(!$this->connection){
+                break;
+            }
             $line = fgets($this->connection, 8129);
             $response['message'] .= $line;
 
