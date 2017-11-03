@@ -234,7 +234,7 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
         if (is_array($log)) {
             print_r($log);
             echo "\n";
-            $mp = json_encode($log, JSON_PRETTY_PRINT);
+            $mp = json_encode($log, 128);
             $this->log .= $tmp."\n";
         } else {
             echo "$log\n";
