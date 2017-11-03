@@ -489,7 +489,7 @@ class FTPClient implements FTPClient_FTPClientInterface,
             }
             $count++;
             if ($count % 100 == 0) {
-                $log = "Uploading $remoteFilename : ".number_format($startPosition + $count * 10240) . " byte";
+                $log = "Uploading $remoteFilename : " . number_format($startPosition + $count * 10240) . " byte";
                 //                echo "$log\n";
                 if ($this->context) {
                     $this->context->onUploadProcess($this, $startPosition + $count * 10240, $log);
@@ -619,6 +619,9 @@ class FTPClient implements FTPClient_FTPClientInterface,
             $this->observer->updateWithRequest($request);
         }
 
+        if (!$this->connection) {
+            throw new Exception('Connection was null');
+        }
         fputs($this->connection, $request);
         return $this->_getResponse();
     }
@@ -634,7 +637,7 @@ class FTPClient implements FTPClient_FTPClientInterface,
         );
 
         while (true) {
-            if(!$this->connection){
+            if (!$this->connection) {
                 break;
             }
             $line = fgets($this->connection, 8129);
