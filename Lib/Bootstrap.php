@@ -62,7 +62,7 @@ class Bootstrap {
     public function run() {
         try {
             // Set time zone
-            date_default_timezone_set(Config_Parameter::g(K::DB)[K::timezone]);
+            date_default_timezone_set("Asia/Saigon");
 
             switch ($this->workingMod) {
                 case C::CLI:
