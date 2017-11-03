@@ -504,9 +504,6 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
                             $this->writeLog($e->getMessage());
                             $api->writeBackupHistory($plane['Code'], $location['Name'], $backupFileName, 'UPLOADFAILED', "Backup complete but backup file not upload to server now, \nupload process will be continue at next fetch\n" . $this->log);
                         }
-
-
-                        $this->writeLog("Write backup history with remote filename");
                         $this->writeLog("BACKUP COMPLETE SUCCESSFUL");
 
                     } catch (Exception $e) {
@@ -523,14 +520,14 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
 
             }
 
-            $this->ftpConnection->disconnect();
+//            $this->ftpConnection->disconnect();
 
             $this->writeLog("=================== BACKUP FOR PLANE $planeCode SUCCESSFUL =========================");
             return true;
         } catch (Exception $e) {
-            if ($this->ftpConnection) {
-                $this->ftpConnection->disconnect();
-            }
+//            if ($this->ftpConnection) {
+//                $this->ftpConnection->disconnect();
+//            }
             echo $e;
         }
         $this->writeLog("=================== BACKUP FOR PLANE $planeCode FAILED =========================");
