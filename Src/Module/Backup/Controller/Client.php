@@ -243,6 +243,21 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
         error_log("{$this->plane} : $tmp");
     }
 
+    public function connectFtp($ftpInfo){
+        $this->ftpConnection = new FTPClient($ftpInfo[K::host], $ftpInfo[K::port], FTPClient::TRANSFER_MODE_PASSIVE, $this);
+        if (!$this->ftpConnection->login($ftpInfo[K::username], $ftpInfo[K::password])) {
+            throw new Exception_Business('System could not login ftp server');
+        }
+        return $this->ftpConnection;
+    }
+
+    public function disconnectFtp() {
+        if($this->ftpConnection) {
+            $this->ftpConnection->disconnect();
+        }
+        return true;
+    }
+
     /**
      * Run backup
      * @param bool $immediate
@@ -283,10 +298,10 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
             );
 
             // Create ftp connection
-            $this->ftpConnection = new FTPClient($ftpInfo[K::host], $ftpInfo[K::port], FTPClient::TRANSFER_MODE_PASSIVE, $this);
-            if (!$this->ftpConnection->login($ftpInfo[K::username], $ftpInfo[K::password])) {
-                throw new Exception_Business('System could not login ftp server');
-            }
+//            $this->ftpConnection = new FTPClient($ftpInfo[K::host], $ftpInfo[K::port], FTPClient::TRANSFER_MODE_PASSIVE, $this);
+//            if (!$this->ftpConnection->login($ftpInfo[K::username], $ftpInfo[K::password])) {
+//                throw new Exception_Business('System could not login ftp server');
+//            }
             //            $ftpConn = ftp_connect($ftpInfo[K::host], $ftpInfo[K::port] ?: 21);
             //            $login_result = ftp_login($ftpConn, $ftpInfo[K::username], $ftpInfo[K::password]);
             //            ftp_pasv($ftpConn, true);
@@ -336,15 +351,20 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
                         $previousLocalFileSize = filesize($previousBackupFile);
                         //$previousRemoteFileSize = $this->getRemoteFileSize($location['LastRunningFile'], $ftpInfo);
                         $remoteFilePath = $plane['Code'] . '/' . $location['Name'] . '/' . $location['LastRunningFile'];
+                        $this->connectFtp($ftpInfo);
                         $previousRemoteFileSize = $this->ftpConnection->getFileSize($remoteFilePath);
+                        $this->disconnectFtp();
                         //                        $previousRemoteFileSize = $getSizeResponse[K::data];
                         $this->writeLog("local : $previousBackupFile ($previousLocalFileSize)");
                         $this->writeLog("remote : $remoteFilePath ($previousRemoteFileSize)");
                         $api->writeBackupHistory($plane['Code'], $location['Name'], $location['LastRunningFile'], 'REUPLOADING', "Reuploading backup file\n" . $this->log);
                         if ($previousRemoteFileSize < $previousLocalFileSize) {
+                            $this->connectFtp($ftpInfo);
                             if (!$this->ftpConnection->upload($previousBackupFile, $remoteFilePath, FTPClient::MODE_BINARY, $previousRemoteFileSize)) {
+                                $this->disconnectFtp();
                                 throw new Exception_Business('System could not continue upload backup file to ftp server');
                             }
+                            $this->disconnectFtp();
                             // remove backup file on local
                             if (!unlink($previousBackupFile)) {
                                 $this->writeLog("System could not remove previous backup file");
@@ -489,9 +509,12 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
                         $api->writeBackupHistory($plane['Code'], $location['Name'], $backupFileName, 'SUCCESS', "Backup complete and file is now uploading to server\n" . $this->log);
 
                         try {
+                            $this->connectFtp($ftpInfo);
                             if (!$this->ftpConnection->upload($backupFile, $remoteFilePath, FTPClient::MODE_BINARY)) {
+                                $this->disconnectFtp();
                                 throw new Exception_Business('Upload backup file fail');
                             } else {
+                                $this->disconnectFtp();
                                 // Remove backup file on local
                                 $this->writeLog("Remove backup file");
                                 unlink($backupFile);
@@ -520,16 +543,13 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
 
             }
 
-//            $this->ftpConnection->disconnect();
-
             $this->writeLog("=================== BACKUP FOR PLANE $planeCode SUCCESSFUL =========================");
+            $this->disconnectFtp();
             return true;
         } catch (Exception $e) {
-//            if ($this->ftpConnection) {
-//                $this->ftpConnection->disconnect();
-//            }
             echo $e;
         }
+        $this->disconnectFtp();
         $this->writeLog("=================== BACKUP FOR PLANE $planeCode FAILED =========================");
         return false;
     }
