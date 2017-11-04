@@ -63,7 +63,7 @@ class Exception_Business extends Exception {
     public function getTraceRecursive() {
         /** @var Exception_Business $previous */
         $previous = $this->getPrevious();
-        $result = [];
+        $result = array();
         if ($previous) {
             if ($previous instanceof Exception_Business) {
                 $result = $previous->getTraceRecursive();
