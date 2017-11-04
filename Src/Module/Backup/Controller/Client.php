@@ -234,7 +234,7 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
             print_r($log);
             echo "\n";
             $tmp = json_encode($log, 128);
-            $this->log .= $tmp."\n";
+            $this->log .= $tmp . "\n";
         } else {
             echo "$log\n";
             $tmp = $log;
@@ -243,7 +243,7 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
         error_log("{$this->plane} : $tmp");
     }
 
-    public function connectFtp($ftpInfo){
+    public function connectFtp($ftpInfo) {
         $this->ftpConnection = new FTPClient($ftpInfo[K::host], $ftpInfo[K::port], FTPClient::TRANSFER_MODE_PASSIVE, $this);
         if (!$this->ftpConnection->login($ftpInfo[K::username], $ftpInfo[K::password])) {
             throw new Exception_Business('System could not login ftp server');
@@ -252,7 +252,7 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
     }
 
     public function disconnectFtp() {
-        if($this->ftpConnection) {
+        if ($this->ftpConnection) {
             $this->ftpConnection->disconnect();
         }
         return true;
@@ -298,10 +298,10 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
             );
 
             // Create ftp connection
-//            $this->ftpConnection = new FTPClient($ftpInfo[K::host], $ftpInfo[K::port], FTPClient::TRANSFER_MODE_PASSIVE, $this);
-//            if (!$this->ftpConnection->login($ftpInfo[K::username], $ftpInfo[K::password])) {
-//                throw new Exception_Business('System could not login ftp server');
-//            }
+            //            $this->ftpConnection = new FTPClient($ftpInfo[K::host], $ftpInfo[K::port], FTPClient::TRANSFER_MODE_PASSIVE, $this);
+            //            if (!$this->ftpConnection->login($ftpInfo[K::username], $ftpInfo[K::password])) {
+            //                throw new Exception_Business('System could not login ftp server');
+            //            }
             //            $ftpConn = ftp_connect($ftpInfo[K::host], $ftpInfo[K::port] ?: 21);
             //            $login_result = ftp_login($ftpConn, $ftpInfo[K::username], $ftpInfo[K::password]);
             //            ftp_pasv($ftpConn, true);
@@ -391,11 +391,15 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
                     $schedules[] = false;
                 }
 
-                if(count($schedules) == 0){
+                if (count($schedules) == 0) {
                     $curPid = file_get_contents(BASE_DIR . '/backup-run.pid');
                     $curPidParts = explode(' ', $curPid);
                     if (!$curPid || !$curPidParts || !Common::checkProcessRunning($curPidParts[0])) {
-                        $api->resetWaitingBackupScheduleState($plane);
+                        $this->writeLog('Reset waiting schedule to ready state');
+                        $result = $api->resetWaitingBackupScheduleState($plane);
+                        if (!$result['return']) {
+                            throw new Exception_Business('System could not reset waiting schedule to ready state');
+                        }
                     }
                 }
 
