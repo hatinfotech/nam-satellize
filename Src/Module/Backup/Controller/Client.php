@@ -391,6 +391,14 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
                     $schedules[] = false;
                 }
 
+                if(count($schedules) == 0){
+                    $curPid = file_get_contents(BASE_DIR . '/backup-run.pid');
+                    $curPidParts = explode(' ', $curPid);
+                    if (!$curPid || !$curPidParts || !Common::checkProcessRunning($curPidParts[0])) {
+                        $api->resetWaitingBackupScheduleState($plane);
+                    }
+                }
+
                 // Backup file by schedule
                 foreach ($schedules as $schedule) {
 
@@ -528,7 +536,9 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
                             $api->writeBackupHistory($plane['Code'], $location['Name'], $backupFileName, 'UPLOADFAILED', "Backup complete but backup file not upload to server now, \nupload process will be continue at next fetch\n" . $this->log);
                         }
                         $this->writeLog("BACKUP COMPLETE SUCCESSFUL");
-
+                        $this->writeLog("=================== BACKUP FOR PLANE $planeCode SUCCESSFUL =========================");
+                        $this->disconnectFtp();
+                        return true;
                     } catch (Exception $e) {
                         $this->writeLog($e->getMessage());
                         // Set job fail on archive result fail
@@ -543,8 +553,8 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
 
             }
 
-            $this->writeLog("=================== BACKUP FOR PLANE $planeCode SUCCESSFUL =========================");
             $this->disconnectFtp();
+            $this->writeLog("=================== END FOR PLANE $planeCode =========================");
             return true;
         } catch (Exception $e) {
             echo $e;

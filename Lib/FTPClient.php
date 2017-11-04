@@ -611,6 +611,7 @@ class FTPClient implements FTPClient_FTPClientInterface,
      * Send a request.
      * @param string $request
      * @return array
+     * @throws Exception
      */
     protected function _request($request) {
         $request = $request . "\r\n";

@@ -302,4 +302,10 @@ class NaMApi {
         ));
     }
 
+    public function resetWaitingBackupScheduleState($plane) {
+        return $this->requestBackupApi('resetWaitingBackupScheduleState', array(
+            'plane' => $plane,
+        ));
+    }
+
 }
