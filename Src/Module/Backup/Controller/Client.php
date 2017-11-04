@@ -240,7 +240,7 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
             $tmp = $log;
             $this->log .= "$tmp\n";
         }
-        error_log("{$this->plane} : $tmp");
+        error_log("{$this->plane} : $tmp",'./php_errors.log');
     }
 
     public function connectFtp($ftpInfo) {
