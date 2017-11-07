@@ -269,8 +269,9 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
         set_time_limit(0);
         error_reporting(E_ALL);
         $planeCode = $this->bootstrap->getRequestParams('plane') ?: Config_Parameter::g(K::BACKUP_PLANE);
+        $this->plane = $planeCode;
 
-
+        // Check for previous process state
         $curPid = file_get_contents(BASE_DIR . '/backup-run.pid');
         $curPidParts = explode(' ', $curPid);
         if ($curPid && $curPidParts && Common::checkProcessRunning($curPidParts[0])) {
@@ -278,7 +279,6 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
             return true;
         }
 
-        $this->plane = $planeCode;
         try {
             $this->writeLog("################ BACKUP FOR PLANE $planeCode ##################");
             $this->setWorkWithTemplate(false);
