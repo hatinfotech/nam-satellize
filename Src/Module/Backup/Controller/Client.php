@@ -215,10 +215,10 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
         //        echo "git fetch --all && git reset --hard origin/master\n";
         //        echo exec("git fetch --all && git reset --hard origin/master") . "\n";
         //sleep(15);
-        $this->writeLog("Check for live status");
         $this->setWorkWithTemplate(false);
         $api = NaMApi::g();
         $this->plane = $plane = $this->bootstrap->getRequestParams('plane');
+        $this->writeLog("Check for live status");
 
         $curPid = file_get_contents(BASE_DIR . '/backup-run.pid');
         $curPidParts = explode(' ', $curPid);
