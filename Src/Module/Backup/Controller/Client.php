@@ -214,19 +214,20 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
     public function liveAction() {
         //        echo "git fetch --all && git reset --hard origin/master\n";
         //        echo exec("git fetch --all && git reset --hard origin/master") . "\n";
-        sleep(15);
+        //sleep(15);
+        $this->writeLog("Check for live status");
         $this->setWorkWithTemplate(false);
         $api = NaMApi::g();
-        $plane = $this->bootstrap->getRequestParams('plane');
+        $this->plane = $plane = $this->bootstrap->getRequestParams('plane');
 
         $curPid = file_get_contents(BASE_DIR . '/backup-run.pid');
         $curPidParts = explode(' ', $curPid);
         if ($curPid && $curPidParts && $plane == trim($curPidParts[1]) && Common::checkProcessRunning(trim($curPidParts[0]))) {
-            $this->writeLog("Previous process was ran, skip for wait");
+            $this->writeLog("Previous process was running, skip for wait");
         }
 
         $result = $api->updateLiveStatus($plane, $curPid && $curPidParts && $plane == trim($curPidParts[1]) && Common::checkProcessRunning(trim($curPidParts[0])));
-        print_r($result);
+        $this->writeLog($result);
     }
 
     protected function writeLog($log) {
