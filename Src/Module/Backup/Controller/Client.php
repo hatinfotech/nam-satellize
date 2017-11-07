@@ -550,8 +550,6 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
                             $this->writeLog($e->getMessage());
                             $api->writeBackupHistory($plane['Code'], $location['Name'], $backupFileName, 'UPLOADFAILED', "Backup complete but backup file not upload to server now, \nupload process will be continue at next fetch\n" . $this->log);
                         }
-                        $this->writeLog("BACKUP COMPLETE SUCCESSFUL");
-                        $this->writeLog("=================== BACKUP FOR PLANE $planeCode SUCCESSFUL =========================");
                         $this->disconnectFtp();
                         //                        return true;
                     } catch (Exception $e) {
@@ -567,9 +565,15 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
                 }
 
             }
+            if(count($schedules) > 0) {
+                $this->writeLog("BACKUP COMPLETE SUCCESSFUL");
+                $this->writeLog("=================== BACKUP FOR PLANE $planeCode SUCCESSFUL =========================");
+            }else{
+                $this->writeLog("=================== NO SCHEDULE ON THIS TIME =====================");
+            }
 
             $this->disconnectFtp();
-            $this->writeLog("=================== END FOR PLANE $planeCode =========================");
+//            $this->writeLog("=================== END FOR PLANE $planeCode =========================");
             return true;
         } catch (Exception $e) {
             echo $e;
