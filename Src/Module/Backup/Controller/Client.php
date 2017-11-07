@@ -413,6 +413,8 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
                         $this->writeLog('Reset waiting schedule to ready state');
                         $result = $api->resetWaitingBackupScheduleState($plane);
                         if (!$result['return']) {
+                            $this->writeLog('Result : ');
+                            $this->writeLog($result);
                             throw new Exception_Business('System could not reset waiting schedule to ready state');
                         }
                     }
