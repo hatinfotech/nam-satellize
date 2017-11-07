@@ -321,7 +321,7 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
             $locations = $plane['locations'];
             $schedules = $plane['schedules'];
 
-            if(count($schedules) > 0){
+            if (count($schedules) > 0) {
                 file_put_contents(BASE_DIR . '/backup-run.pid', getmypid() . " " . $planeCode);
             }
 
@@ -422,14 +422,14 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
                 foreach ($schedules as $schedule) {
 
                     // Store pid
-//                    $curPid = file_get_contents(BASE_DIR . '/backup-run.pid');
-//                    $curPidParts = explode(' ', $curPid);
-//                    if ($curPid && $curPidParts && Common::checkProcessRunning($curPidParts[0])) {
-//                        $this->writeLog("Previous process was running, skip for wait");
-//                        if ($schedule) $api->updateBackupScheduleState($schedule[K::Id], 'WAITING');
-//                        break;
-//                    }
-//                    file_put_contents(BASE_DIR . '/backup-run.pid', getmypid() . " " . $planeCode);
+                    //                    $curPid = file_get_contents(BASE_DIR . '/backup-run.pid');
+                    //                    $curPidParts = explode(' ', $curPid);
+                    //                    if ($curPid && $curPidParts && Common::checkProcessRunning($curPidParts[0])) {
+                    //                        $this->writeLog("Previous process was running, skip for wait");
+                    //                        if ($schedule) $api->updateBackupScheduleState($schedule[K::Id], 'WAITING');
+                    //                        break;
+                    //                    }
+                    //                    file_put_contents(BASE_DIR . '/backup-run.pid', getmypid() . " " . $planeCode);
 
                     try {
                         $this->writeLog("update schedule state => RUNNING, last running");
@@ -569,18 +569,18 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
                 }
 
             }
-            if(count($schedules) > 0) {
+            if (count($schedules) > 0) {
                 $this->writeLog("BACKUP COMPLETE SUCCESSFUL");
                 $this->writeLog("=================== BACKUP FOR PLANE $planeCode SUCCESSFUL =========================");
-            }else{
+            } else {
                 $this->writeLog("=================== NO SCHEDULE ON THIS TIME =====================");
             }
 
             $this->disconnectFtp();
-//            $this->writeLog("=================== END FOR PLANE $planeCode =========================");
+            //            $this->writeLog("=================== END FOR PLANE $planeCode =========================");
             return true;
         } catch (Exception $e) {
-            echo $e;
+            $this->writeLog((string)$e);
             $this->disconnectFtp();
             $this->writeLog("=================== BACKUP FOR PLANE $planeCode FAILED =========================");
             return false;
