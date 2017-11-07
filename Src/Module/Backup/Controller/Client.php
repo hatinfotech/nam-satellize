@@ -552,7 +552,7 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
                         $this->writeLog("BACKUP COMPLETE SUCCESSFUL");
                         $this->writeLog("=================== BACKUP FOR PLANE $planeCode SUCCESSFUL =========================");
                         $this->disconnectFtp();
-                        return true;
+//                        return true;
                     } catch (Exception $e) {
                         $this->writeLog($e->getMessage());
                         // Set job fail on archive result fail
