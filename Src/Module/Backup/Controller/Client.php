@@ -221,11 +221,11 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
 
         $curPid = file_get_contents(BASE_DIR . '/backup-run.pid');
         $curPidParts = explode(' ', $curPid);
-        if ($curPid && $curPidParts && $plane == $curPidParts[1] && Common::checkProcessRunning($curPidParts[0])) {
+        if ($curPid && $curPidParts && $plane == trim($curPidParts[1]) && Common::checkProcessRunning(trim($curPidParts[0]))) {
             $this->writeLog("Previous process was ran, skip for wait");
         }
 
-        $result = $api->updateLiveStatus($plane, $curPid && $curPidParts && $plane == $curPidParts[1] && Common::checkProcessRunning($curPidParts[0]));
+        $result = $api->updateLiveStatus($plane, $curPid && $curPidParts && $plane == trim($curPidParts[1]) && Common::checkProcessRunning(trim($curPidParts[0])));
         print_r($result);
     }
 
@@ -420,7 +420,7 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
                     $curPid = file_get_contents(BASE_DIR . '/backup-run.pid');
                     $curPidParts = explode(' ', $curPid);
                     if ($curPid && $curPidParts && Common::checkProcessRunning($curPidParts[0])) {
-                        $this->writeLog("Previous process was ran, skip for wait");
+                        $this->writeLog("Previous process was running, skip for wait");
                         if ($schedule) $api->updateBackupScheduleState($schedule[K::Id], 'WAITING');
                         break;
                     }
@@ -552,7 +552,7 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
                         $this->writeLog("BACKUP COMPLETE SUCCESSFUL");
                         $this->writeLog("=================== BACKUP FOR PLANE $planeCode SUCCESSFUL =========================");
                         $this->disconnectFtp();
-//                        return true;
+                        //                        return true;
                     } catch (Exception $e) {
                         $this->writeLog($e->getMessage());
                         // Set job fail on archive result fail
