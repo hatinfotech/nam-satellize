@@ -97,11 +97,12 @@ class FTPClient implements FTPClient_FTPClientInterface,
 
     /**
      * Close the connection.
-     * @return void
+     * @return array|bool|void
      */
     public function disconnect() {
-        $this->_request('QUIT');
+        $result = $this->_request('QUIT');
         $this->connection = null;
+        return $result;
     }
 
     /**
@@ -610,7 +611,7 @@ class FTPClient implements FTPClient_FTPClientInterface,
     /**
      * Send a request.
      * @param string $request
-     * @return array
+     * @return array|bool
      * @throws Exception
      */
     protected function _request($request) {
@@ -621,7 +622,8 @@ class FTPClient implements FTPClient_FTPClientInterface,
         }
 
         if (!$this->connection) {
-            throw new Exception('Connection was null');
+            error_log('Ftp connection was null');
+            return false;
         }
         fputs($this->connection, $request);
         return $this->_getResponse();
