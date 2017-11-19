@@ -585,8 +585,10 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
             $this->writeLog((string)$e);
             $this->disconnectFtp();
             $this->writeLog("=================== BACKUP FOR PLANE $planeCode FAILED =========================");
-            return false;
         }
+        file_put_contents(BASE_DIR . '/backup-run.pid', '');
+        return false;
+
     }
 
     public function runImmediateAction() {
