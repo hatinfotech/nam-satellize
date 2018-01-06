@@ -18,9 +18,9 @@ class Config_Groupnamsoftwarecom_Parameter extends Config_Parameter {
             K::timezone => 'Asia/Saigon',
             K::charset => 'utf8',
         );
-        $this->parameter[K::NAM_API_URl] = 'http://tch1.ddns.net:8080';
-        $this->parameter[K::SITE_CODE] = 'vantoc.com';
-        $this->parameter[K::COPYRIGHT] = '© Copyright 2006 - 2017 by vantoc.com. All Rights Reserved';
+        $this->parameter[K::NAM_API_URl] = 'http://groupbk.ddns.net:8080';
+        $this->parameter[K::SITE_CODE] = 'groupbk.ddns.net';
+        $this->parameter[K::COPYRIGHT] = '© Copyright 2006 - 2017 by groupbk.ddns.net. All Rights Reserved';
         //$this->parameter[K::BACKUP_PLANE] = 'BKP106174';
         $this->parameter[K::NO_DB] = true;
         $this->parameter[K::PLATFORM] = 'windows';
