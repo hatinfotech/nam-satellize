@@ -184,7 +184,12 @@ class Common {
             echo "Check previous process \$output = ";
             print_r($output);
             echo "\n";
-            return $output[2] ? true : false;
+            foreach ($output as $item) {
+                if (preg_match('/' . $pid . '/', $item)) {
+                    return true;
+                }
+            }
+            return false;
         } elseif (Config_Parameter::g(K::PLATFORM) == 'linux') {
             exec("ps x | grep $pid", $output, $return);
             foreach ($output as $item) {
