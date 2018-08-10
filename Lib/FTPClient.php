@@ -148,7 +148,7 @@ class FTPClient implements FTPClient_FTPClientInterface,
      * @return bool If success return TRUE, fail return FALSE.
      */
     public function createDirectory($directory) {
-        $response = $this->_request(sprintf('MKD %s', $directory));
+        $response = $this->_request(sprintf('MKD %s -p', $directory));
         if($response['code'] != 257){
             print_r($response);
         }
