@@ -181,6 +181,9 @@ class Common {
         $return = null;
         if (Config_Parameter::g(K::PLATFORM) == 'windows') {
             exec('tasklist /fi "PID eq ' . $pid . '"', $output, $return);
+            echo "Check previous process \$output = ";
+            print_r($output);
+            echo "\n";
             return $output[2] ? true : false;
         } elseif (Config_Parameter::g(K::PLATFORM) == 'linux') {
             exec("ps x | grep $pid", $output, $return);
