@@ -365,7 +365,7 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
                         $this->writeLog("Re upload previous backup file");
                         $previousLocalFileSize = filesize($previousBackupFile);
                         //$previousRemoteFileSize = $this->getRemoteFileSize($location['LastRunningFile'], $ftpInfo);
-                        $remoteFilePath = trim($plane['FtpPath'] . '/' . $plane['Code'] . '/' . $location['Name'] . '/' . $location['LastRunningFile'], '/');
+                        $remoteFilePath = $plane['FtpPath'] . '/' . $plane['Code'] . '/' . $location['Name'] . '/' . $location['LastRunningFile'];
                         $this->connectFtp($ftpInfo);
                         $previousRemoteFileSize = $this->ftpConnection->getFileSize($remoteFilePath);
                         $this->disconnectFtp();
@@ -524,8 +524,8 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
                             throw new Exception_Business('Check for archive was result failed');
                         }
 
-                        $ftpInfo[K::path] = trim($plane['FtpPath'] . '/' . $plane['Code'] . '/' . $location['Name'], '/');
-                        $remoteFilePath = trim($plane['FtpPath'] . '/' . $plane['Code'] . '/' . $location['Name'] . '/' . $backupFileName, '/');
+                        $ftpInfo[K::path] = $plane['FtpPath'] . '/' . $plane['Code'] . '/' . $location['Name'];
+                        $remoteFilePath = $plane['FtpPath'] . '/' . $plane['Code'] . '/' . $location['Name'] . '/' . $backupFileName;
 
                         // Upload file
                         $this->writeLog("Post backup file to ftp server");
