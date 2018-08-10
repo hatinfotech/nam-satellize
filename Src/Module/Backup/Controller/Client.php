@@ -365,7 +365,7 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
                         $this->writeLog("Re upload previous backup file");
                         $previousLocalFileSize = filesize($previousBackupFile);
                         //$previousRemoteFileSize = $this->getRemoteFileSize($location['LastRunningFile'], $ftpInfo);
-                        $remoteFilePath = $plane['Code'] . '/' . $location['Name'] . '/' . $location['LastRunningFile'];
+                        $remoteFilePath = trim($plane['FtpPath'] . '/' . $plane['Code'] . '/' . $location['Name'] . '/' . $location['LastRunningFile'], '/');
                         $this->connectFtp($ftpInfo);
                         $previousRemoteFileSize = $this->ftpConnection->getFileSize($remoteFilePath);
                         $this->disconnectFtp();
