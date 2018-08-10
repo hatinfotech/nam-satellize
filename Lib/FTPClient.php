@@ -149,6 +149,9 @@ class FTPClient implements FTPClient_FTPClientInterface,
      */
     public function createDirectory($directory) {
         $response = $this->_request(sprintf('MKD %s', $directory));
+        if($response['code'] != 257){
+            print_r($response);
+        }
         return ($response['code'] === 257);
     }
 
