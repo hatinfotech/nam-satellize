@@ -147,9 +147,27 @@ class FTPClient implements FTPClient_FTPClientInterface,
      * @param string $directory
      * @return bool If success return TRUE, fail return FALSE.
      */
+    public function createDirectoryRecursive($directory) {
+
+        $curDir = '';
+        $directoryParts = explode('/', $directory);
+        foreach ($directoryParts as $directoryPart) {
+            $curDir .= '/' . $directoryPart;
+            $this->createDirectory($curDir);
+        }
+
+        return true;
+    }
+
+    /**
+     * Create a directory.
+     * @param string $directory
+     * @return bool If success return TRUE, fail return FALSE.
+     */
     public function createDirectory($directory) {
-        $response = $this->_request(sprintf('MKD %s -p', $directory));
-        if($response['code'] != 257){
+
+        $response = $this->_request(sprintf('MKD %s', $directory));
+        if ($response['code'] != 257) {
             print_r($response);
         }
         return ($response['code'] === 257);
@@ -437,7 +455,7 @@ class FTPClient implements FTPClient_FTPClientInterface,
         // Create remote path
         $remotePath = preg_replace('/\/([^\/]*)$/', '', $remoteFilename);
         echo "Create \$remotePath = $remotePath\n";
-        $this->createDirectory($remotePath);
+        $this->createDirectoryRecursive($remotePath);
 
         /*
          * WHY USE 'rb' HERE?
