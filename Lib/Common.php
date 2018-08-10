@@ -181,7 +181,7 @@ class Common {
         $return = null;
         if (Config_Parameter::g(K::PLATFORM) == 'windows') {
             exec('tasklist /fi "PID eq ' . $pid . '"', $output, $return);
-            echo "Check previous process \$output = ";
+            echo "Check previous process (pid = $pid) \$output = ";
             print_r($output);
             echo "\n";
             foreach ($output as $item) {
