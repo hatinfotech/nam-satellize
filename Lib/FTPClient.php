@@ -431,6 +431,10 @@ class FTPClient implements FTPClient_FTPClientInterface,
             throw new InvalidArgumentException(sprintf('Invalid mode "%s" was given', $mode));
         }
 
+        // Create remote path
+        $remotePath = preg_replace('/\/([^\/]*)$/', '', $remoteFilename);
+        $this->createDirectory($remotePath);
+
         /*
          * WHY USE 'rb' HERE?
          * As fopen() function modifies line break character like LF, CR and CRLF depending on SAPI,
