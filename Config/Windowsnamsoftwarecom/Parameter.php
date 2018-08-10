@@ -18,8 +18,8 @@ class Config_Windowsnamsoftwarecom_Parameter extends Config_Parameter {
             K::timezone => 'Asia/Saigon',
             K::charset => 'utf8',
         );
-        $this->parameter[K::NAM_API_URl] = 'http://bkclient.namsoftware.com:8080';
-        $this->parameter[K::SITE_CODE] = 'bkclient.namsoftware.com';
+        $this->parameter[K::NAM_API_URl] = 'http://bkcenter.namsoftware.com:8080';
+        $this->parameter[K::SITE_CODE] = 'bkcenter.namsoftware.com';
         $this->parameter[K::COPYRIGHT] = '© Copyright 2006 - 2017 by namsoftware. All Rights Reserved';
         //$this->parameter[K::BACKUP_PLANE] = 'BKP106174';
         $this->parameter[K::NO_DB] = true;
