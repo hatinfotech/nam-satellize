@@ -152,8 +152,10 @@ class FTPClient implements FTPClient_FTPClientInterface,
         $curDir = '';
         $directoryParts = explode('/', $directory);
         foreach ($directoryParts as $directoryPart) {
-            $curDir .= '/' . $directoryPart;
-            $this->createDirectory($curDir);
+            if($directoryPart) {
+                $curDir .= '/' . $directoryPart;
+                $this->createDirectory($curDir);
+            }
         }
 
         return true;
