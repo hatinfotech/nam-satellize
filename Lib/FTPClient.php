@@ -433,6 +433,7 @@ class FTPClient implements FTPClient_FTPClientInterface,
 
         // Create remote path
         $remotePath = preg_replace('/\/([^\/]*)$/', '', $remoteFilename);
+        echo "Create \$remotePath = $remotePath\n";
         $this->createDirectory($remotePath);
 
         /*
