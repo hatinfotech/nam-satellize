@@ -185,7 +185,7 @@ class Common {
             print_r($output);
             echo "\n";
             foreach ($output as $item) {
-                if (preg_match('/' . $pid . '/', $item)) {
+                if (preg_match('/.*php.*' . $pid . '/', $item)) {
                     return true;
                 }
             }
