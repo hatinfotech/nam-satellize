@@ -492,7 +492,7 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
                         $this->writeLog($output);
 
                         if ($listFile) {
-                            //unlink($listFile);
+                            unlink($listFile);
                         }
 
                         // Check for compress (u2)
@@ -546,7 +546,7 @@ class Backup_Controller_Client extends Controller implements FTPClient_Context {
                                 $this->disconnectFtp();
                                 // Remove backup file on local
                                 $this->writeLog("Remove backup file");
-                                //unlink($backupFile);
+                                unlink($backupFile);
                                 $api->writeBackupHistory($plane['Code'], $location['Name'], $backupFileName, 'SUCCESS', "BACKUP COMPLETE SUCCESSFUL\n" . $this->log);
                                 // Write backup history with remote filename
                                 $api->updateLocationLastRunningStateAsSuccess($location[K::Id], $backupFileName);
